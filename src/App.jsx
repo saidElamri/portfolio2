@@ -1,23 +1,56 @@
   import React, { useRef, useState, useEffect } from 'react';
   import * as THREE from 'three';
 
-  const Portfolio = () => {
-    const mountRef = useRef(null);
-    const [activeProject, setActiveProject] = useState(null);
+  const projects = [
+  { 
+    id: 0, 
+    title: "MLS Quiz App", 
+    desc: "Interactive quiz platform with real-time scoring, favorites system, and owl-themed design.", 
+    longDesc: "A comprehensive quiz application featuring user authentication, favorite questions system, progress tracking, and an engaging owl mascot theme.", 
+    tech: ["React", "Express", "MongoDB", "Node.js", "JWT", "REST API"], 
+    github: "https://github.com/saidElamri/Quizz-LMS", 
+    demo: "https://lmsquiz.netlify.app/", 
+    image: process.env.PUBLIC_URL + "/projects/lms.png" 
+  },
+  { 
+    id: 1, 
+    title: "Food Xplorers", 
+    desc: "Discover authentic dishes from cities worldwide with beautiful imagery and detailed recipes.", 
+    longDesc: "A culinary exploration platform that allows users to discover traditional dishes from various cities around the world.", 
+    tech: ["Vite", "React", "TheMealDB API", "Tailwind CSS"], 
+    github: "https://github.com/saidElamri/native-food", 
+    demo: "https://foodxplorers.netlify.app/", 
+    image: process.env.PUBLIC_URL + "/projects/foodapp.png" 
+  },
+  { 
+    id: 2, 
+    title: "Code Explainer with Gemini AI", 
+    desc: "Flask web app for AI-powered Python code explanations.", 
+    longDesc: "A Flask-based web application that leverages Google Gemini to explain Python code for both beginners and advanced users. It supports Markdown formatting, provides clear step-by-step explanations, and ensures secure handling of API keys with .env management.", 
+    tech: ["Python", "Flask", "Google Gemini", "Markdown", "dotenv"], 
+    github: "https://github.com/saidElamri/codexplainer", 
+    demo: "https://codexplainer-gray.vercel.app/", 
+    image: process.env.PUBLIC_URL + "/projects/codeex.png" 
+  },
+  { 
+    id: 3, 
+    title: "PetroSolPro", 
+    desc: "Stock & distribution management for fuel stations.", 
+    longDesc: "PetroSolPro is a React demo app showcasing a professional solution for stock management and distribution tailored to private and institutional fuel stations. It features real-time delivery tracking, precise stock level visualization, fraud/leak detection alerts, maintenance & automation tools.", 
+    tech: ["React", "React Router DOM", "Tailwind CSS", "Recharts", "Vite"], 
+    github: "https://github.com/saidElamri/petro", 
+    demo: "https://aga-petro.netlify.app/", 
+    image: process.env.PUBLIC_URL + "/projects/petro.png"
+  }
+];
 
-    const projects = [
-      { id: 0, title: "MLS Quiz App", desc: "Interactive quiz platform with real-time scoring, favorites system, and owl-themed design.", longDesc: "A comprehensive quiz application featuring user authentication, favorite questions system, progress tracking, and an engaging owl mascot theme.", tech: ["React", "Express", "MongoDB", "Node.js", "JWT", "REST API"], github: "https://github.com/saidElamri/Quizz-LMS", demo: "https://lmsquiz.netlify.app/", image: "/projects/lms.png" },
-      { id: 1, title: "Food Xplorers", desc: "Discover authentic dishes from cities worldwide with beautiful imagery and detailed recipes.", longDesc: "A culinary exploration platform that allows users to discover traditional dishes from various cities around the world.", tech: ["Vite", "React", "TheMealDB API", "Tailwind CSS"], github: "https://github.com/saidElamri/native-food", demo: "https://foodxplorers.netlify.app/", image: "/projects/foodapp.png" },
-      { id: 2, title: "Code Explainer with Gemini AI", desc: "Flask web app for AI-powered Python code explanations.", longDesc: "A Flask-based web application that leverages Google Gemini to explain Python code for both beginners and advanced users. It supports Markdown formatting, provides clear step-by-step explanations, and ensures secure handling of API keys with .env management.", tech: ["Python", "Flask", "Google Gemini", "Markdown", "dotenv"], github: "https://github.com/saidElamri/codexplainer", demo: "https://codexplainer-gray.vercel.app/", image: "/projects/codeex.png" },
-      { id: 3, title: "PetroSolPro", desc: "Stock & distribution management for fuel stations.", longDesc: "PetroSolPro is a React demo app showcasing a professional solution for stock management and distribution tailored to private and institutional fuel stations. It features real-time delivery tracking, precise stock level visualization, fraud/leak detection alerts, maintenance & automation tools.", tech: ["React", "React Router DOM", "Tailwind CSS", "Recharts", "Vite"], github: "https://github.com/saidElamri/petro", demo: "https://aga-petro.netlify.app/", image: "/projects/petro.png"}
-    ];
+const certificates = [
+  { id: 1, title: "ODC Orange Bootcamp", issuer: "Orange Digital Center Morocco", date: "2024", description: "Intensive full-stack development bootcamp focusing on MERN stack and algorithms", image: process.env.PUBLIC_URL + "/certificates/odc.jpg" },
+  { id: 2, title: "Meta Front-End Developer", issuer: "Meta (Coursera)", date: "2023", description: "Professional certificate covering React and modern frontend development", image: process.env.PUBLIC_URL + "/certificates/meta-frontend.jpg" },
+  { id: 3, title: "JavaScript Algorithms", issuer: "freeCodeCamp", date: "2023", description: "Data structures and algorithms certification", image: process.env.PUBLIC_URL + "/certificates/js.png" },
+  { id: 4, title: "Responsive Web Design", issuer: "freeCodeCamp", date: "2023", description: "Comprehensive certification in HTML5, CSS3, and responsive design", image: process.env.PUBLIC_URL + "/certificates/responsive.png" }
+];
 
-    const certificates = [
-      { id: 1, title: "ODC Orange Bootcamp", issuer: "Orange Digital Center Morocco", date: "2024", description: "Intensive full-stack development bootcamp focusing on MERN stack and algorithms", image: "/certificates/odc.jpg" },
-      { id: 2, title: "Meta Front-End Developer", issuer: "Meta (Coursera)", date: "2023", description: "Professional certificate covering React and modern frontend development", image: "/certificates/meta-frontend.jpg" },
-      { id: 3, title: "JavaScript Algorithms", issuer: "freeCodeCamp", date: "2023", description: "Data structures and algorithms certification", image: "/certificates/js.png" },
-      { id: 4, title: "Responsive Web Design", issuer: "freeCodeCamp", date: "2023", description: "Comprehensive certification in HTML5, CSS3, and responsive design", image: "/certificates/responsive.png" }
-    ];  
 
     useEffect(() => {
       if (!mountRef.current) return;
