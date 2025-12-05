@@ -2,13 +2,65 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/portfolio2/assets/icon-BMYjU_8u.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>portfolio</title>
-    <script type="module" crossorigin src="/portfolio2/assets/index-ulihYjJm.js"></script>
-    <link rel="stylesheet" crossorigin href="/portfolio2/assets/index--50bzQ1y.css">
+    
+    <!-- Primary Meta Tags -->
+    <title>Said Elamri | AI Architect × Creative Technologist</title>
+    <meta name="title" content="Said Elamri | AI Architect × Creative Technologist" />
+    <meta name="description" content="Full-stack developer specializing in AI/ML solutions, microservices architecture, and modern web development. Building intelligent systems that scale." />
+    <meta name="author" content="Said Elamri" />
+    <meta name="keywords" content="Said Elamri, AI Developer, Full Stack Developer, Machine Learning, React, Python, Portfolio" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://saidelamri.dev/" />
+    <meta property="og:title" content="Said Elamri | AI Architect × Creative Technologist" />
+    <meta property="og:description" content="Full-stack developer specializing in AI/ML solutions, microservices architecture, and modern web development." />
+    <meta property="og:image" content="/portfolio2/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://saidelamri.dev/" />
+    <meta property="twitter:title" content="Said Elamri | AI Architect × Creative Technologist" />
+    <meta property="twitter:description" content="Full-stack developer specializing in AI/ML solutions, microservices architecture, and modern web development." />
+    <meta property="twitter:image" content="/portfolio2/og-image.png" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/portfolio2/manifest.json" />
+    <meta name="theme-color" content="#0a0a0f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SaidOS" />
+    <link rel="apple-touch-icon" href="/portfolio2/icons/icon-192.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/portfolio2/icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/portfolio2/icons/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/portfolio2/icons/icon-16.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/portfolio2/assets/index-CNv24l_7.js"></script>
+    <link rel="stylesheet" crossorigin href="/portfolio2/assets/index-CB1PRNRT.css">
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/portfolio2/sw.js')
+            .then((registration) => {
+              console.log('SW registered:', registration.scope);
+            })
+            .catch((error) => {
+              console.log('SW registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>
