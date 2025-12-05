@@ -9,6 +9,16 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
 
+    // Mobile detection
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+    // Auto-maximize on mobile
+    React.useEffect(() => {
+        if (isMobile && isOpen) {
+            setIsMaximized(true);
+        }
+    }, [isMobile, isOpen]);
+
     if (!isOpen) return null;
 
     const toggleMaximize = () => {
@@ -48,16 +58,6 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
         };
         return icons[id] || '📄';
     };
-
-    // Mobile detection
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
-    // Auto-maximize on mobile
-    React.useEffect(() => {
-        if (isMobile && isOpen) {
-            setIsMaximized(true);
-        }
-    }, [isMobile, isOpen]);
 
     return (
         <motion.div

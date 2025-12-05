@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Grid, X, ChevronUp, Minus } from 'lucide-react';
+import { LayoutGrid, X, ChevronUp, Minus } from 'lucide-react';
 
 const MobileNav = ({ items }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -28,7 +28,7 @@ const MobileNav = ({ items }) => {
 
             {/* Navigation Bar / Drawer */}
             <motion.div
-                className={`md:hidden fixed bottom-0 left-0 right-0 bg-[#1c1c1e]/90 backdrop-blur-2xl border-t border-white/10 z-[70] transition-all duration-300 ease-spring ${isExpanded ? 'rounded-t-3xl min-h-[60vh]' : 'pb-6 pt-2 px-4'}`}
+                className={`md:hidden fixed bottom-0 left-0 right-0 bg-[#1c1c1e]/90 backdrop-blur-2xl border-t border-white/10 z-[1000] transition-all duration-300 ease-spring pointer-events-auto ${isExpanded ? 'rounded-t-3xl min-h-[60vh]' : 'pb-6 pt-2 px-4'}`}
                 animate={{
                     height: isExpanded ? 'auto' : 'auto', // Let content drive height
                 }}
@@ -64,7 +64,7 @@ const MobileNav = ({ items }) => {
                             className="flex flex-col items-center gap-1.5 pt-2"
                         >
                             <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white backdrop-blur-sm border border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                                <Grid className="w-6 h-6" />
+                                <LayoutGrid className="w-6 h-6" />
                             </div>
                             <span className="text-[10px] text-white font-bold">All Apps</span>
                         </motion.button>
