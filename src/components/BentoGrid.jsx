@@ -252,7 +252,7 @@ const BentoGrid = ({ projects, onOpenProject }) => {
 
             {/* Grid */}
             <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 hide-scrollbar"
+                className="grid grid-cols-1 md:grid-cols-2 gap-3 h-full md:max-h-[50vh] overflow-y-auto pr-1 hide-scrollbar pb-20 md:pb-0"
                 layout
             >
                 <AnimatePresence mode="popLayout">

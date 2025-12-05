@@ -16,7 +16,7 @@ const ThemePicker = () => {
     ];
 
     return (
-        <div className="fixed bottom-28 right-6 z-[100]">
+        <div className="hidden md:block fixed bottom-28 right-6 z-[100]">
             {/* Toggle Button */}
             <motion.button
                 whileHover={{ scale: 1.1, rotate: 15 }}
@@ -39,7 +39,7 @@ const ThemePicker = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                        className="absolute bottom-18 right-0 w-80 backdrop-blur-2xl rounded-2xl border shadow-2xl overflow-hidden"
+                        className="absolute bottom-16 right-0 w-[85vw] md:w-80 max-h-[60vh] overflow-y-auto backdrop-blur-2xl rounded-2xl border shadow-2xl custom-scrollbar"
                         style={{
                             backgroundColor: 'color-mix(in srgb, var(--color-surface) 95%, transparent)',
                             borderColor: 'var(--color-border)'
@@ -128,8 +128,8 @@ const ThemePicker = () => {
                                             key={lang.code}
                                             onClick={() => i18n.changeLanguage(lang.code)}
                                             className={`py-2 rounded-lg text-xs font-medium transition-all ${i18n.language === lang.code
-                                                    ? 'bg-white/10 text-white border-white/20'
-                                                    : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 border-transparent'
+                                                ? 'bg-white/10 text-white border-white/20'
+                                                : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 border-transparent'
                                                 } border`}
                                         >
                                             <div className="text-lg mb-0.5">{lang.flag}</div>

@@ -135,7 +135,7 @@ const Dock = ({ items }) => {
     }, []);
 
     return (
-        <div className="fixed bottom-3 md:bottom-5 left-1/2 -translate-x-1/2 z-50 px-2">
+        <div className="fixed bottom-3 md:bottom-5 left-1/2 -translate-x-1/2 z-50 px-2 pb-[env(safe-area-inset-bottom)]">
             <motion.div
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}

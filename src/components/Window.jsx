@@ -49,6 +49,16 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
         return icons[id] || '📄';
     };
 
+    // Mobile detection
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+    // Auto-maximize on mobile
+    React.useEffect(() => {
+        if (isMobile && isOpen) {
+            setIsMaximized(true);
+        }
+    }, [isMobile, isOpen]);
+
     return (
         <motion.div
             layout
@@ -57,29 +67,32 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                 opacity: 1,
                 scale: 1,
                 y: 0,
-                ...(isMaximized ? {
+                // Force full screen on mobile or if maximized
+                ...((isMaximized || isMobile) ? {
                     width: '100vw',
-                    height: 'calc(100vh - 28px)',
-                    top: '28px',
+                    height: isMobile ? 'calc(100dvh - 90px)' : 'calc(100vh - 28px)', // More room for dock
+                    top: isMobile ? '0px' : '28px',
                     left: 0,
                     x: 0,
                     y: 0,
+                    borderRadius: 0,
                 } : {})
             }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', stiffness: 350, damping: 30 }}
             style={{
                 zIndex,
-                ...(!isMaximized ? position : {})
+                // Defensive check to prevent ReferenceError during hot reload
+                ...(!(isMaximized || isMobile) && typeof position !== 'undefined' ? position : {})
             }}
             className={`
                 absolute flex flex-col
-                ${!isMaximized ? 'w-[92vw] md:w-[560px] lg:w-[620px] rounded-2xl' : 'rounded-none'}
+                ${!(isMaximized || isMobile) ? 'w-[92vw] md:w-[560px] lg:w-[620px] rounded-2xl' : ''}
             `}
             onMouseDown={onFocus}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            drag={!isMaximized}
+            drag={!isMaximized && !isMobile} // Disable drag on mobile
             dragMomentum={false}
             dragConstraints={{ left: -300, right: 400, top: -50, bottom: 400 }}
             dragElastic={0.03}

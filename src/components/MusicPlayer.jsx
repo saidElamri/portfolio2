@@ -81,6 +81,8 @@ const MusicPlayer = () => {
         audioRef.current.muted = isMuted;
     }, [volume, isMuted]);
 
+    const [isMinimized, setIsMinimized] = useState(false);
+
     const togglePlay = () => setIsPlaying(!isPlaying);
 
     const nextTrack = () => {
@@ -101,8 +103,31 @@ const MusicPlayer = () => {
         setProgress(clickPercent * 100);
     };
 
+    if (isMinimized) {
+        return (
+            <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-2 rounded-full shadow-2xl flex items-center gap-2 pr-4 relative z-50">
+                <div
+                    className={`w-8 h-8 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center shrink-0 shadow-lg cursor-pointer ${isPlaying ? 'animate-spin-slow' : ''}`}
+                    onClick={() => setIsMinimized(false)}
+                >
+                    <Music className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex flex-col flex-1 min-w-[80px] cursor-pointer" onClick={() => setIsMinimized(false)}>
+                    <span className="text-[10px] font-bold text-white truncate max-w-[100px]">{playlist[currentTrackIndex].title}</span>
+                    <span className="text-[8px] text-white/60 truncate max-w-[100px]">{playlist[currentTrackIndex].artist}</span>
+                </div>
+                <button
+                    onClick={togglePlay}
+                    className="w-6 h-6 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform active:scale-95"
+                >
+                    {isPlaying ? <Pause className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current ml-0.5" />}
+                </button>
+            </div>
+        );
+    }
+
     return (
-        <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-4 rounded-xl w-full max-w-xs shadow-2xl relative overflow-hidden group font-sans">
+        <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-4 rounded-xl w-full max-w-xs shadow-2xl relative overflow-hidden group font-sans z-50">
             {/* Visualizer Background (Fake) */}
             <div className="absolute inset-0 flex items-end justify-center gap-1 opacity-20 pointer-events-none p-4 z-0">
                 {[...Array(20)].map((_, i) => (
@@ -119,7 +144,11 @@ const MusicPlayer = () => {
 
             {/* Album Art & Info */}
             <div className="relative z-10 flex gap-4 items-center mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-lg flex items-center justify-center shrink-0 shadow-lg ${isPlaying ? 'animate-spin-slow' : ''}`}>
+                <div
+                    className={`w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-lg flex items-center justify-center shrink-0 shadow-lg cursor-pointer ${isPlaying ? 'animate-spin-slow' : ''}`}
+                    onClick={() => setIsMinimized(true)}
+                    title="Click to minimize"
+                >
                     <Music className="w-6 h-6 text-white" />
                 </div>
                 <div className="overflow-hidden flex-1">
@@ -198,8 +227,8 @@ const MusicPlayer = () => {
                                         setIsPlaying(true);
                                     }}
                                     className={`w-full text-left p-2 rounded-lg text-xs flex items-center gap-3 transition-colors ${currentTrackIndex === i
-                                            ? 'bg-white/10 text-white'
-                                            : 'text-neutral-400 hover:bg-white/5 hover:text-white'
+                                        ? 'bg-white/10 text-white'
+                                        : 'text-neutral-400 hover:bg-white/5 hover:text-white'
                                         }`}
                                 >
                                     <span className="w-4 text-center opacity-50">{i + 1}</span>

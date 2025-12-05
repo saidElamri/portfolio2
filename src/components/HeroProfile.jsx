@@ -43,9 +43,9 @@ const HeroProfile = ({ onViewProjects, onContact }) => {
     return (
         <div className="space-y-4">
             {/* Profile Header */}
-            <div className="flex items-start gap-4">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left">
                 {/* Avatar */}
-                <div className="relative group">
+                <div className="relative group shrink-0">
                     <motion.div
                         className="absolute -inset-1 rounded-2xl opacity-60 blur-sm"
                         style={{
@@ -58,7 +58,7 @@ const HeroProfile = ({ onViewProjects, onContact }) => {
                     />
 
                     <div
-                        className="relative w-14 h-14 rounded-xl flex items-center justify-center text-xl font-bold overflow-hidden"
+                        className="relative w-20 h-20 md:w-14 md:h-14 rounded-xl flex items-center justify-center text-2xl md:text-xl font-bold overflow-hidden"
                         style={{
                             backgroundColor: theme.surface,
                             border: `2px solid ${theme.accent}30`,
@@ -81,11 +81,11 @@ const HeroProfile = ({ onViewProjects, onContact }) => {
 
                     {/* Live indicator */}
                     <div
-                        className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center"
+                        className="absolute -bottom-0.5 -right-0.5 w-5 h-5 md:w-4 md:h-4 rounded-full border-2 flex items-center justify-center"
                         style={{ backgroundColor: theme.surface, borderColor: theme.background }}
                     >
                         <motion.div
-                            className="w-2 h-2 rounded-full"
+                            className="w-2.5 h-2.5 md:w-2 md:h-2 rounded-full"
                             style={{ backgroundColor: '#7ee787' }}
                             animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
                             transition={{ duration: 2, repeat: Infinity }}
@@ -94,21 +94,21 @@ const HeroProfile = ({ onViewProjects, onContact }) => {
                 </div>
 
                 {/* Name & Status */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 w-full flex flex-col items-center md:items-start">
                     <div className="flex items-center gap-2">
-                        <h1 className="text-lg font-bold" style={{ color: theme.text }}>
+                        <h1 className="text-2xl md:text-lg font-bold" style={{ color: theme.text }}>
                             {t('hero.name')}
                         </h1>
                         <motion.div
                             animate={{ rotate: [0, 15, -15, 0] }}
                             transition={{ duration: 2, repeat: Infinity, repeatDelay: 4 }}
                         >
-                            <Sparkles className="w-3.5 h-3.5" style={{ color: theme.accent }} />
+                            <Sparkles className="w-5 h-5 md:w-3.5 md:h-3.5" style={{ color: theme.accent }} />
                         </motion.div>
                     </div>
 
                     {/* Rotating tagline */}
-                    <div className="h-4 overflow-hidden mt-0.5">
+                    <div className="h-5 md:h-4 overflow-hidden mt-1 md:mt-0.5">
                         <AnimatePresence mode="wait">
                             <motion.p
                                 key={taglineIndex}
@@ -116,7 +116,7 @@ const HeroProfile = ({ onViewProjects, onContact }) => {
                                 animate={{ y: 0, opacity: 1 }}
                                 exit={{ y: -16, opacity: 0 }}
                                 transition={{ duration: 0.25 }}
-                                className="text-[11px]"
+                                className="text-sm md:text-[11px]"
                                 style={{ color: theme.textMuted }}
                             >
                                 {taglines && taglines[taglineIndex]}
@@ -125,16 +125,16 @@ const HeroProfile = ({ onViewProjects, onContact }) => {
                     </div>
 
                     {/* Location & Status */}
-                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                    <div className="flex flex-wrapjustify-center md:justify-start items-center gap-2 md:gap-1.5 mt-3 md:mt-2">
                         <span
-                            className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full"
+                            className="flex items-center gap-1.5 text-xs md:text-[10px] px-3 py-1 md:px-2 md:py-0.5 rounded-full"
                             style={{
                                 color: theme.textMuted,
                                 backgroundColor: theme.background,
                                 border: `1px solid ${theme.border}`
                             }}
                         >
-                            <MapPin className="w-2.5 h-2.5" />
+                            <MapPin className="w-3 h-3 md:w-2.5 md:h-2.5" />
                             {personalInfo.location}
                         </span>
 
@@ -144,14 +144,14 @@ const HeroProfile = ({ onViewProjects, onContact }) => {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: 10 }}
-                                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
+                                className="flex items-center gap-1.5 px-3 py-1 md:px-2 md:py-0.5 rounded-full text-xs md:text-[10px] font-medium"
                                 style={{
                                     backgroundColor: `${currentStatus.color}12`,
                                     color: currentStatus.color,
                                     border: `1px solid ${currentStatus.color}25`,
                                 }}
                             >
-                                <StatusIcon className="w-2.5 h-2.5" />
+                                <StatusIcon className="w-3 h-3 md:w-2.5 md:h-2.5" />
                                 {currentStatus.text}
                             </motion.div>
                         </AnimatePresence>

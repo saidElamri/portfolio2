@@ -470,18 +470,20 @@ const PortfolioContent = () => {
         focusWindow={focusWindow}
       />
 
-      {/* Desktop Area */}
-      <div className="relative w-full h-full pt-8 pb-24">
+      {/* Main Content Area */}
+      <div className="relative z-10 w-full h-full pointer-events-none">
 
-        {/* Desktop Icons */}
-        <DesktopIcons
-          installedApps={installedApps}
-          availableApps={availableApps}
-          iconPositions={iconPositions}
-          setIconPositions={setIconPositions}
-          toggleWindow={toggleWindow}
-          focusWindow={focusWindow}
-        />
+        {/* Desktop Icons - Hidden on mobile */}
+        <div className="hidden md:block">
+          <DesktopIcons
+            installedApps={installedApps}
+            availableApps={availableApps}
+            iconPositions={iconPositions}
+            setIconPositions={setIconPositions}
+            toggleWindow={toggleWindow}
+            focusWindow={focusWindow}
+          />
+        </div>
 
         <AnimatePresence>
 
@@ -693,16 +695,15 @@ const PortfolioContent = () => {
           </Window>
 
           {/* Music Player Window (Small) */}
-          {windows.music.isOpen && (
-            <div
-              key="window-music"
-              className="absolute top-20 right-10 z-0"
-              style={{ zIndex: windows.music.zIndex }}
-              onMouseDown={() => focusWindow('music')}
-            >
-              <MusicPlayer />
-            </div>
-          )}
+          <div
+            key="window-music"
+            className="hidden md:block absolute top-20 right-10 z-0"
+            style={{ zIndex: windows.music.zIndex }}
+            onMouseDown={() => focusWindow('music')}
+          >
+            <MusicPlayer />
+          </div>
+
 
         </AnimatePresence>
       </div>
