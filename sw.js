@@ -1,4 +1,4 @@
-const CACHE_NAME = 'saidos-portfolio-v1';
+const CACHE_NAME = 'saidos-portfolio-v2';
 const STATIC_ASSETS = [
   '/portfolio2/',
   '/portfolio2/index.html',
