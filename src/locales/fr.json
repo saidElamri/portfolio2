@@ -1,0 +1,155 @@
+{
+  "nav": {
+    "file": "Fichier",
+    "edit": "Édition",
+    "view": "Affichage",
+    "help": "Aide",
+    "restart": "Redémarrer le système",
+    "shutdown": "Éteindre...",
+    "copy": "Copier",
+    "paste": "Coller",
+    "preferences": "Préférences...",
+    "fullscreen": "Plein écran",
+    "exitFullscreen": "Quitter le plein écran",
+    "hackerMode": "Mode Hacker",
+    "commandPalette": "Palette de commandes",
+    "askAI": "Demander à SaidAI",
+    "tip": "Astuce : Appuyez sur 1-7 pour basculer les fenêtres"
+  },
+  "windows": {
+    "about": "À propos",
+    "projects": "Projets",
+    "skills": "Compétences",
+    "terminal": "Terminal",
+    "ai": "SaidAI",
+    "github": "GitHub",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Salut, je suis",
+    "name": "Said Elamri",
+    "taglines": [
+      "Architecte IA × Développeur Full Stack",
+      "Transformer des problèmes complexes en solutions élégantes",
+      "Des réseaux neuronaux aux microservices",
+      "Café → Code → Déployer → Répéter",
+      "Construire l'avenir, un commit à la fois"
+    ],
+    "status": [
+      "🟢 Disponible pour embauche",
+      "☕ Alimenté par le café",
+      "🚀 En train de créer quelque chose de cool",
+      "🎯 Ouvert aux opportunités"
+    ],
+    "viewProjects": "Voir les projets",
+    "contactMe": "Me contacter",
+    "yearsExp": "Ans d'exp",
+    "projects": "Projets",
+    "techStack": "Stack Tech",
+    "languages": "Langues"
+  },
+  "skills": {
+    "title": "Compétences & Parcours",
+    "tabs": {
+      "skills": "Compétences",
+      "certificates": "Certificats",
+      "journey": "Parcours"
+    },
+    "coreStack": "Stack Principale",
+    "aiData": "IA & Données",
+    "infrastructure": "Infrastructure",
+    "security": "Sécurité"
+  },
+  "projects": {
+    "title": "Projets",
+    "allProjects": "Tous les projets",
+    "fullStack": "Full Stack",
+    "frontend": "Frontend",
+    "aiMl": "IA / ML",
+    "enterprise": "Entreprise",
+    "viewProject": "Voir le projet",
+    "viewCode": "Voir le code",
+    "featured": "En vedette",
+    "demo": "Démo",
+    "noProjects": "Aucun projet dans cette catégorie pour le moment.",
+    "categories": {
+      "all": "Tous les projets",
+      "Full Stack": "Full Stack",
+      "Frontend": "Frontend",
+      "AI / ML": "IA / ML",
+      "Enterprise": "Entreprise"
+    }
+  },
+  "contact": {
+    "title": "Me Contacter",
+    "subtitle": "Vous avez un projet en tête ? Parlons-en !",
+    "name": "Nom",
+    "namePlaceholder": "Votre nom",
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "message": "Message",
+    "messagePlaceholder": "Parlez-moi de votre projet...",
+    "send": "Envoyer le message",
+    "sending": "Envoi en cours...",
+    "success": "Message envoyé avec succès !",
+    "error": "Échec de l'envoi. Veuillez réessayer."
+  },
+  "ai": {
+    "title": "Assistant SaidAI",
+    "online": "En ligne",
+    "greeting": "Salut ! Je suis SaidAI, votre assistant virtuel. Posez-moi des questions sur les compétences, projets ou expérience de Said !",
+    "placeholder": "Posez-moi une question...",
+    "suggestions": ["Compétences", "Projets", "Contact", "Expérience"],
+    "responses": {
+      "skills": "Said est un ingénieur Full Stack spécialisé en React, Node.js, Python et AWS. Il développe des applications web évolutives et intègre l'IA/ML dans les systèmes de production.",
+      "projects": "Découvrez la fenêtre Projets ! Les points forts incluent ce portfolio style OS, des plateformes d'analyse alimentées par l'IA et des expériences web 3D interactives.",
+      "contact": "Email : said.elamri.evil@gmail.com | GitHub : github.com/saidElamri | LinkedIn : linkedin.com/in/saidelamri",
+      "experience": "Said a des années d'expérience dans le développement d'applications de qualité production, des MVP de startup aux solutions d'entreprise.",
+      "hire": "Vous cherchez à embaucher ? Said est disponible pour des postes à temps plein et des contrats. Email : said.elamri.evil@gmail.com",
+      "default": "Je peux vous aider à en savoir plus sur les compétences, projets, expérience de Said, ou comment le contacter.",
+      "hello": "Bonjour ! Ravi de vous rencontrer. Que souhaitez-vous savoir sur Said ?"
+    }
+  },
+  "terminal": {
+    "welcome": "Bienvenue sur SaidOS Terminal v2.0",
+    "help": "Tapez 'help' pour les commandes disponibles",
+    "commands": {
+      "help": "Afficher les commandes disponibles",
+      "about": "À propos de Said Elamri",
+      "skills": "Lister les compétences",
+      "projects": "Lister les projets",
+      "contact": "Informations de contact",
+      "clear": "Effacer le terminal"
+    }
+  },
+  "boot": {
+    "loading": "Chargement de SaidOS...",
+    "messages": [
+      "Initialisation des réseaux neuronaux...",
+      "Chargement des modules créatifs...",
+      "Compilation de l'expertise...",
+      "Rendu du portfolio...",
+      "Presque terminé..."
+    ],
+    "ready": "Système prêt"
+  },
+  "theme": {
+    "title": "Apparence",
+    "themes": "Thèmes",
+    "sound": "Effets sonores",
+    "motion": "Réduire les animations",
+    "language": "Langue"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "common": {
+    "close": "Fermer",
+    "download": "Télécharger",
+    "resume": "CV",
+    "copyEmail": "Copier l'email",
+    "battery": "Batterie"
+  }
+}

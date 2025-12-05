@@ -1,0 +1,239 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { X, Minus, Maximize2, Sparkles } from 'lucide-react';
+import useThemeStore, { themes } from '../stores/themeStore';
+
+const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinimize }) => {
+    const [isMaximized, setIsMaximized] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const { currentTheme } = useThemeStore();
+    const theme = themes[currentTheme];
+
+    if (!isOpen) return null;
+
+    const toggleMaximize = () => {
+        setIsMaximized(!isMaximized);
+    };
+
+    const getPosition = () => {
+        // On mobile, center all windows
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+            return { top: '40px', left: '50%', transform: 'translateX(-50%)' };
+        }
+        const positions = {
+            about: { top: '80px', left: '60px' },
+            projects: { top: '90px', left: '50%' },
+            terminal: { top: '100px', left: '70px' },
+            contact: { top: '80px', left: '55%' },
+            ai: { top: '90px', left: '35%' },
+            github: { top: '100px', left: '45%' },
+            skills: { top: '85px', left: '40%' },
+        };
+        return positions[id] || { top: '100px', left: '30%' };
+    };
+
+    const position = getPosition();
+
+    // Icon mapping for window titles
+    const getWindowIcon = () => {
+        const icons = {
+            about: '👤',
+            projects: '📁',
+            terminal: '⚡',
+            contact: '📧',
+            ai: '🤖',
+            github: '🐙',
+            skills: '💼',
+            music: '🎵',
+        };
+        return icons[id] || '📄';
+    };
+
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                ...(isMaximized ? {
+                    width: '100vw',
+                    height: 'calc(100vh - 28px)',
+                    top: '28px',
+                    left: 0,
+                    x: 0,
+                    y: 0,
+                } : {})
+            }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+            style={{
+                zIndex,
+                ...(!isMaximized ? position : {})
+            }}
+            className={`
+                absolute flex flex-col
+                ${!isMaximized ? 'w-[92vw] md:w-[560px] lg:w-[620px] rounded-2xl' : 'rounded-none'}
+            `}
+            onMouseDown={onFocus}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            drag={!isMaximized}
+            dragMomentum={false}
+            dragConstraints={{ left: -300, right: 400, top: -50, bottom: 400 }}
+            dragElastic={0.03}
+        >
+            {/* Outer glow effect */}
+            {!isMaximized && (
+                <motion.div
+                    className="absolute -inset-0.5 rounded-2xl pointer-events-none"
+                    animate={{
+                        opacity: isHovered ? 0.6 : 0,
+                        boxShadow: isHovered
+                            ? `0 0 40px ${theme.accent}30, 0 0 80px ${theme.accentSecondary}20`
+                            : `0 0 0px transparent, 0 0 0px transparent`
+                    }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                        background: `linear-gradient(135deg, ${theme.accent}40, ${theme.accentSecondary}40, ${theme.accent}40)`,
+                    }}
+                />
+            )}
+
+            {/* Animated gradient border */}
+            {isHovered && !isMaximized && (
+                <div
+                    className="absolute -inset-[1px] rounded-2xl opacity-50 pointer-events-none"
+                    style={{
+                        background: `linear-gradient(135deg, ${theme.accent}, ${theme.accentSecondary}, ${theme.accent})`,
+                        backgroundSize: '200% 200%',
+                        animation: 'gradient-shift 3s linear infinite',
+                    }}
+                />
+            )}
+
+            {/* Window Frame */}
+            <div
+                className={`
+                    relative flex flex-col h-full overflow-hidden
+                    backdrop-blur-2xl backdrop-saturate-150
+                    transition-all duration-300
+                    ${!isMaximized ? 'rounded-2xl' : ''}
+                `}
+                style={{
+                    backgroundColor: `${theme.surface}e8`,
+                    boxShadow: isHovered
+                        ? `0 25px 60px -12px ${theme.accent}25, 0 12px 30px -8px rgba(0,0,0,0.4)`
+                        : `0 20px 50px -15px rgba(0,0,0,0.5), 0 8px 24px -8px rgba(0,0,0,0.3)`,
+                    border: `1px solid ${isHovered ? theme.accent + '30' : theme.border}`,
+                }}
+            >
+                {/* Subtle noise texture */}
+                <div
+                    className="absolute inset-0 opacity-[0.015] pointer-events-none mix-blend-overlay"
+                    style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+                    }}
+                />
+
+                {/* Title Bar */}
+                <div
+                    className="flex items-center h-10 px-3 shrink-0 cursor-grab active:cursor-grabbing relative"
+                    style={{ borderBottom: `1px solid ${theme.border}` }}
+                    onDoubleClick={toggleMaximize}
+                >
+                    {/* Traffic Lights */}
+                    <div className="flex items-center gap-1.5 mr-3">
+                        <button
+                            onClick={onClose}
+                            className="group w-3 h-3 rounded-full bg-[#ff5f57] hover:bg-[#ff5f57]/80 transition-all flex items-center justify-center shadow-sm"
+                        >
+                            <X className="w-2 h-2 text-[#8b0000] opacity-0 group-hover:opacity-100" strokeWidth={3} />
+                        </button>
+                        <button
+                            onClick={onMinimize}
+                            className="group w-3 h-3 rounded-full bg-[#febc2e] hover:bg-[#febc2e]/80 transition-all flex items-center justify-center shadow-sm"
+                        >
+                            <Minus className="w-2 h-2 text-[#8b6508] opacity-0 group-hover:opacity-100" strokeWidth={3} />
+                        </button>
+                        <button
+                            onClick={toggleMaximize}
+                            className="group w-3 h-3 rounded-full bg-[#28c840] hover:bg-[#28c840]/80 transition-all flex items-center justify-center shadow-sm"
+                        >
+                            <Maximize2 className="w-1.5 h-1.5 text-[#0d5415] opacity-0 group-hover:opacity-100" strokeWidth={3} />
+                        </button>
+                    </div>
+
+                    {/* Title */}
+                    <div className="flex-1 flex items-center justify-center gap-2 pr-12 overflow-hidden">
+                        <motion.span
+                            animate={{
+                                scale: isHovered ? [1, 1.1, 1] : 1,
+                            }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {getWindowIcon()}
+                        </motion.span>
+                        <span
+                            className="text-[12px] font-medium select-none truncate transition-colors duration-200"
+                            style={{ color: isHovered ? theme.text : theme.textMuted }}
+                        >
+                            {title}
+                        </span>
+                        {isHovered && (
+                            <motion.div
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                exit={{ scale: 0 }}
+                            >
+                                <Sparkles className="w-3 h-3 shrink-0" style={{ color: theme.accent }} />
+                            </motion.div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Content */}
+                <div
+                    className={`
+                        flex-1 overflow-y-auto overflow-x-hidden p-4
+                        ${!isMaximized ? 'min-h-[260px] max-h-[52vh]' : 'h-full'}
+                    `}
+                    style={{ color: theme.text }}
+                >
+                    <div className="h-full">
+                        {children}
+                    </div>
+                </div>
+
+                {/* Bottom accent line */}
+                <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-[2px]"
+                    style={{
+                        background: `linear-gradient(90deg, transparent, ${theme.accent}, ${theme.accentSecondary}, ${theme.accent}, transparent)`
+                    }}
+                    animate={{
+                        opacity: isHovered ? 0.6 : 0,
+                    }}
+                    transition={{ duration: 0.3 }}
+                />
+            </div>
+        </motion.div>
+    );
+};
+
+// Add keyframes
+if (typeof document !== 'undefined' && !document.getElementById('window-keyframes')) {
+    const style = document.createElement('style');
+    style.id = 'window-keyframes';
+    style.textContent = `
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+export default Window;

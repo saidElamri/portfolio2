@@ -1,0 +1,155 @@
+{
+  "nav": {
+    "file": "File",
+    "edit": "Edit",
+    "view": "View",
+    "help": "Help",
+    "restart": "Restart System",
+    "shutdown": "Shut Down...",
+    "copy": "Copy",
+    "paste": "Paste",
+    "preferences": "Preferences...",
+    "fullscreen": "Enter Fullscreen",
+    "exitFullscreen": "Exit Fullscreen",
+    "hackerMode": "Toggle Hacker Mode",
+    "commandPalette": "Command Palette",
+    "askAI": "Ask SaidAI Assistant",
+    "tip": "Tip: Press 1-7 to toggle windows"
+  },
+  "windows": {
+    "about": "About Me",
+    "projects": "Projects",
+    "skills": "Skills",
+    "terminal": "Terminal",
+    "ai": "SaidAI",
+    "github": "GitHub",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Hey, I'm",
+    "name": "Said Elamri",
+    "taglines": [
+      "AI Architect × Full Stack Engineer",
+      "Turning complex problems into elegant solutions",
+      "From neural networks to microservices",
+      "Coffee → Code → Deploy → Repeat",
+      "Building the future, one commit at a time"
+    ],
+    "status": [
+      "🟢 Available for hire",
+      "☕ Powered by coffee",
+      "🚀 Building something cool",
+      "🎯 Open to opportunities"
+    ],
+    "viewProjects": "View Projects",
+    "contactMe": "Contact Me",
+    "yearsExp": "Years Exp",
+    "projects": "Projects",
+    "techStack": "Tech Stack",
+    "languages": "Languages"
+  },
+  "skills": {
+    "title": "Skills & Journey",
+    "tabs": {
+      "skills": "Skills",
+      "certificates": "Certificates",
+      "journey": "Journey"
+    },
+    "coreStack": "Core Stack",
+    "aiData": "AI & Data",
+    "infrastructure": "Infrastructure",
+    "security": "Security"
+  },
+  "projects": {
+    "title": "Projects",
+    "allProjects": "All Projects",
+    "fullStack": "Full Stack",
+    "frontend": "Frontend",
+    "aiMl": "AI / ML",
+    "enterprise": "Enterprise",
+    "viewProject": "View Project",
+    "viewCode": "View Code",
+    "featured": "Featured",
+    "demo": "Demo",
+    "noProjects": "No projects in this category yet.",
+    "categories": {
+      "all": "All Projects",
+      "Full Stack": "Full Stack",
+      "Frontend": "Frontend",
+      "AI / ML": "AI / ML",
+      "Enterprise": "Enterprise"
+    }
+  },
+  "contact": {
+    "title": "Get In Touch",
+    "subtitle": "Have a project in mind? Let's talk!",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "message": "Message",
+    "messagePlaceholder": "Tell me about your project...",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Message sent successfully!",
+    "error": "Failed to send. Please try again."
+  },
+  "ai": {
+    "title": "SaidAI Assistant",
+    "online": "Online",
+    "greeting": "Hey! I'm SaidAI, your virtual assistant. Ask me anything about Said's skills, projects, or experience!",
+    "placeholder": "Ask me anything...",
+    "suggestions": ["Skills", "Projects", "Contact", "Experience"],
+    "responses": {
+      "skills": "Said is a Full Stack Engineer specializing in React, Node.js, Python, and AWS. He builds scalable web applications and integrates AI/ML into production systems.",
+      "projects": "Check out the Projects window! Highlights include this OS-style portfolio, AI-powered analytics platforms, and interactive 3D web experiences.",
+      "contact": "Email: said.elamri.evil@gmail.com | GitHub: github.com/saidElamri | LinkedIn: linkedin.com/in/saidelamri",
+      "experience": "Said has years of experience building production-grade applications, from startup MVPs to enterprise solutions.",
+      "hire": "Looking to hire? Said is available for full-time roles and contract work. Email: said.elamri.evil@gmail.com",
+      "default": "I can help you learn about Said's skills, projects, experience, or how to get in touch.",
+      "hello": "Hello! Great to meet you. What would you like to know about Said?"
+    }
+  },
+  "terminal": {
+    "welcome": "Welcome to SaidOS Terminal v2.0",
+    "help": "Type 'help' for available commands",
+    "commands": {
+      "help": "Show available commands",
+      "about": "About Said Elamri",
+      "skills": "List skills",
+      "projects": "List projects",
+      "contact": "Contact information",
+      "clear": "Clear terminal"
+    }
+  },
+  "boot": {
+    "loading": "Loading SaidOS...",
+    "messages": [
+      "Initializing neural networks...",
+      "Loading creative modules...",
+      "Compiling expertise...",
+      "Rendering portfolio...",
+      "Almost there..."
+    ],
+    "ready": "System Ready"
+  },
+  "theme": {
+    "title": "Appearance",
+    "themes": "Themes",
+    "sound": "Sound Effects",
+    "motion": "Reduce Motion",
+    "language": "Language"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "common": {
+    "close": "Close",
+    "download": "Download",
+    "resume": "Resume",
+    "copyEmail": "Copy Email",
+    "battery": "Battery"
+  }
+}
