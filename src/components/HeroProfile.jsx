@@ -32,13 +32,13 @@ const HeroProfile = ({ onViewProjects, onContact, onSkills }) => {
     );
 
     return (
-        <div className="space-y-6">
+        <div className="flex flex-col h-full">
             {/* Profile Header - Clean and Confident */}
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left mb-8">
                 {/* Avatar */}
                 <div className="relative shrink-0">
                     <div
-                        className="relative w-16 h-16 rounded-xl flex items-center justify-center text-lg font-bold overflow-hidden"
+                        className="relative w-20 h-20 rounded-2xl flex items-center justify-center text-xl font-bold overflow-hidden"
                         style={{
                             backgroundColor: theme.surface,
                             border: `1px solid ${theme.border}`,
@@ -54,35 +54,35 @@ const HeroProfile = ({ onViewProjects, onContact, onSkills }) => {
 
                     {/* Available indicator */}
                     <div
-                        className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center"
+                        className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 flex items-center justify-center"
                         style={{ backgroundColor: theme.surface, borderColor: theme.background }}
                     >
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#7ee787' }} />
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#7ee787' }} />
                     </div>
                 </div>
 
                 {/* Name & Title */}
                 <div className="flex-1 min-w-0">
-                    <h1 className="text-xl font-bold" style={{ color: theme.text }}>
+                    <h1 className="text-2xl font-bold" style={{ color: theme.text }}>
                         {t('hero.name')}
                     </h1>
-                    <p className="text-sm font-medium mt-0.5" style={{ color: theme.accent }}>
+                    <p className="text-sm font-medium mt-1" style={{ color: theme.accent }}>
                         MERN Full-Stack & Web AI Developer
                     </p>
 
                     {/* Location badge */}
-                    <div className="flex justify-center md:justify-start mt-2">
+                    <div className="flex justify-center md:justify-start mt-3">
                         <span
-                            className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full"
+                            className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full"
                             style={{
                                 color: theme.textMuted,
                                 backgroundColor: theme.background,
                                 border: `1px solid ${theme.border}`
                             }}
                         >
-                            <MapPin className="w-2.5 h-2.5" />
+                            <MapPin className="w-3 h-3" />
                             {personalInfo.location}
-                            <span className="text-green-400 ml-1">• Open to work</span>
+                            <span className="text-green-400">• Open to work</span>
                         </span>
                     </div>
                 </div>
@@ -90,58 +90,61 @@ const HeroProfile = ({ onViewProjects, onContact, onSkills }) => {
 
             {/* Value Proposition - Single, clear statement */}
             <div
-                className="p-4 rounded-xl"
+                className="p-5 rounded-xl mb-8"
                 style={{ backgroundColor: theme.background }}
             >
                 <p className="text-sm leading-relaxed" style={{ color: theme.textMuted }}>
-                    I build <span style={{ color: theme.text }}>AI-powered web applications</span> that solve real problems.
-                    From neural networks to microservices, I focus on <span style={{ color: theme.text }}>systems that work</span>—not just UIs that look good.
+                    I build <span style={{ color: theme.text, fontWeight: 500 }}>AI-powered web applications</span> that solve real problems.
+                    From neural networks to microservices, I focus on <span style={{ color: theme.text, fontWeight: 500 }}>systems that work</span>—not just UIs that look good.
                 </p>
             </div>
 
             {/* Quick Navigation - 3 clear paths */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-4 mb-8">
                 <NavButton
                     onClick={onViewProjects}
                     icon={FolderOpen}
-                    label={t('nav.projects') || 'Projects'}
+                    label="Projects"
                     primary
                 />
                 <NavButton
                     onClick={onSkills}
                     icon={Layers}
-                    label={t('nav.stack') || 'Stack'}
+                    label="Stack"
                 />
                 <NavButton
                     onClick={onContact}
                     icon={Mail}
-                    label={t('nav.contact') || 'Contact'}
+                    label="Contact"
                 />
             </div>
 
             {/* Proof Points - Real numbers, not percentages */}
             <div
-                className="flex items-center justify-center gap-6 py-3 rounded-lg"
+                className="flex items-center justify-center gap-8 py-5 rounded-xl mb-8"
                 style={{ backgroundColor: theme.background }}
             >
                 <div className="text-center">
-                    <div className="text-lg font-bold" style={{ color: theme.accent }}>6</div>
-                    <div className="text-xs" style={{ color: theme.textMuted }}>Production Apps</div>
+                    <div className="text-2xl font-bold" style={{ color: theme.accent }}>6</div>
+                    <div className="text-xs mt-1" style={{ color: theme.textMuted }}>Production Apps</div>
                 </div>
-                <div className="w-px h-8" style={{ backgroundColor: theme.border }} />
+                <div className="w-px h-10" style={{ backgroundColor: theme.border }} />
                 <div className="text-center">
-                    <div className="text-lg font-bold" style={{ color: theme.accent }}>3</div>
-                    <div className="text-xs" style={{ color: theme.textMuted }}>AI Projects</div>
+                    <div className="text-2xl font-bold" style={{ color: theme.accent }}>3</div>
+                    <div className="text-xs mt-1" style={{ color: theme.textMuted }}>AI Projects</div>
                 </div>
-                <div className="w-px h-8" style={{ backgroundColor: theme.border }} />
+                <div className="w-px h-10" style={{ backgroundColor: theme.border }} />
                 <div className="text-center">
-                    <div className="text-lg font-bold" style={{ color: theme.accent }}>4</div>
-                    <div className="text-xs" style={{ color: theme.textMuted }}>Languages</div>
+                    <div className="text-2xl font-bold" style={{ color: theme.accent }}>4</div>
+                    <div className="text-xs mt-1" style={{ color: theme.textMuted }}>Languages</div>
                 </div>
             </div>
 
-            {/* Social Links */}
-            <div className="flex items-center justify-center gap-3">
+            {/* Spacer to push social links to bottom */}
+            <div className="flex-1" />
+
+            {/* Social Links - at bottom */}
+            <div className="flex items-center justify-center gap-4 pt-4" style={{ borderTop: `1px solid ${theme.border}` }}>
                 <a
                     href={`https://github.com/${personalInfo.github}`}
                     target="_blank"
