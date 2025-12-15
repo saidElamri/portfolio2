@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore, { themes } from '../stores/themeStore';
 import useAppStore from '../stores/appStore';
@@ -113,6 +113,9 @@ const DockItem = ({ icon: Icon, label, onClick, isOpen, index, isMobile }) => {
     );
 };
 
+// Memoize to prevent re-renders when parent state changes
+const MemoizedDockItem = memo(DockItem);
+
 const Dock = ({ items }) => {
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
@@ -221,7 +224,7 @@ const Dock = ({ items }) => {
 
                     {items.map((item, index) => (
                         <React.Fragment key={item.id}>
-                            <DockItem {...item} index={index} isMobile={isMobile} />
+                            <MemoizedDockItem {...item} index={index} isMobile={isMobile} />
                             {/* Separator - desktop only */}
                             {!isMobile && (index === 2 || index === 5) && (
                                 <div className="w-px h-6 bg-white/10 mx-1" />
@@ -237,5 +240,4 @@ const Dock = ({ items }) => {
     );
 };
 
-export default Dock;
-
+export default memo(Dock);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { X, Minus, Maximize2, Sparkles } from 'lucide-react';
 import {
@@ -41,6 +41,18 @@ const TopBar = ({
     dragHandlers
 }) => {
     const Icon = getWindowIcon(id);
+    const lastClickTime = useRef(0);
+
+    // Handle double-click to maximize
+    const handleTitleBarClick = (e) => {
+        const now = Date.now();
+        if (now - lastClickTime.current < 300) {
+            // Double click detected
+            onMaximize?.();
+        }
+        lastClickTime.current = now;
+        onFocus?.();
+    };
 
     // Mobile header with swipe-to-close
     if (isMobile) {
@@ -81,12 +93,12 @@ const TopBar = ({
         );
     }
 
-    // Desktop header
+    // Desktop header with double-click to maximize
     return (
         <div
-            className="flex items-center justify-between px-4 py-2.5 shrink-0 rounded-t-xl cursor-move"
+            className="flex items-center justify-between px-4 py-2.5 shrink-0 rounded-t-xl cursor-move select-none"
             style={{ borderBottom: `1px solid ${theme.border}` }}
-            onMouseDown={onFocus}
+            onMouseDown={handleTitleBarClick}
         >
             {/* Traffic lights */}
             <div className="flex gap-2">

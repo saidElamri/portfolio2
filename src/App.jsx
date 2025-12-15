@@ -27,6 +27,7 @@ import { projects } from './data/portfolio';
 import useThemeStore from './stores/themeStore';
 // Hooks
 import useVoiceCommands from './hooks/useVoiceCommands';
+import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import MobileNav from './components/MobileNav';
 import MobileStatusBar from './components/MobileStatusBar';
 import MobileHomeScreen from './components/MobileHomeScreen';
@@ -68,6 +69,9 @@ const PortfolioContent = () => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Enable keyboard shortcuts (Cmd+W, Cmd+Q, Escape)
+  useKeyboardShortcuts();
 
 
   // App Store Persistence
