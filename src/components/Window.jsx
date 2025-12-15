@@ -157,7 +157,7 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
             {/* Window container */}
             <div
                 className={`
-                    flex flex-col overflow-hidden backdrop-blur-xl
+                    flex flex-col backdrop-blur-xl
                     ${isMobile ? 'h-full rounded-t-3xl' : 'rounded-xl shadow-2xl'}
                 `}
                 style={{
@@ -188,6 +188,7 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                     className={`
                         flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col min-h-0
                         ${!isMaximized && !isMobile ? 'min-h-[320px] max-h-[60vh]' : ''}
+                        ${isMobile ? 'rounded-t-3xl' : 'rounded-b-xl'}
                     `}
                     style={{ color: theme.text }}
                 >
