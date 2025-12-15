@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { motion, useMotionValue, useTransform, useAnimation, PanInfo } from 'framer-motion';
 import { X, Minus, Maximize2, Sparkles, ChevronDown } from 'lucide-react';
 import useThemeStore, { themes } from '../stores/themeStore';
 
@@ -12,17 +12,51 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
     // Mobile detection
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-    // Auto-maximize on mobile
+    // Swipe-to-close state for mobile
+    const dragY = useMotionValue(0);
+    const dragOpacity = useTransform(dragY, [0, 150], [1, 0.5]);
+    const dragScale = useTransform(dragY, [0, 150], [1, 0.95]);
+    const controls = useAnimation();
+    const contentRef = useRef(null);
+
+    // Auto-maximize on mobile + trigger animation
     React.useEffect(() => {
         if (isMobile && isOpen) {
             setIsMaximized(true);
+            // Trigger slide-up animation for mobile
+            controls.start({
+                y: 0,
+                opacity: 1,
+                transition: { type: 'spring', stiffness: 350, damping: 30, mass: 0.8 }
+            });
         }
-    }, [isMobile, isOpen]);
+    }, [isMobile, isOpen, controls]);
 
     if (!isOpen) return null;
 
     const toggleMaximize = () => {
         setIsMaximized(!isMaximized);
+    };
+
+    // Handle swipe-down-to-close (mobile only, from header drag handle)
+    const handleDragEnd = (event, info) => {
+        // If dragged down more than 100px, close the window
+        if (info.offset.y > 100) {
+            controls.start({
+                y: '100%',
+                opacity: 0,
+                transition: { duration: 0.2 }
+            }).then(() => {
+                onClose();
+            });
+        } else {
+            // Snap back
+            controls.start({
+                y: 0,
+                opacity: 1,
+                transition: { type: 'spring', stiffness: 400, damping: 30 }
+            });
+        }
     };
 
     const getPosition = () => {
@@ -60,17 +94,15 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
 
     // Motion Variants - Platform Specific
     const mobileVariants = {
-        initial: { opacity: 0, scale: 0.9, y: '20px' },
+        initial: { opacity: 0, y: '100%' },
         animate: {
             opacity: 1,
-            scale: 1,
             y: 0,
             transition: { type: 'spring', stiffness: 350, damping: 30, mass: 0.8 }
         },
         exit: {
             opacity: 0,
-            scale: 0.95,
-            y: '20px',
+            y: '100%',
             transition: { duration: 0.2 }
         }
     };
@@ -94,10 +126,10 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
 
     return (
         <motion.div
-            layout
+            layout={!isMobile}
             variants={variants}
             initial="initial"
-            animate="animate"
+            animate={isMobile ? controls : "animate"}
             exit="exit"
             style={{
                 zIndex,
@@ -186,14 +218,22 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                     }}
                 />
 
-                {/* Mobile Header - Pill handle and close button */}
+                {/* Mobile Header - Draggable for swipe-to-close */}
                 {isMobile && (
-                    <div className="flex flex-col items-center pt-4 pb-3 shrink-0">
-                        {/* Swipe indicator pill */}
-                        <div
-                            className="w-10 h-1 bg-white/40 rounded-full mb-3 cursor-pointer"
-                            onClick={onClose}
-                        />
+                    <motion.div
+                        className="flex flex-col items-center pt-3 pb-2 shrink-0 touch-none"
+                        drag="y"
+                        dragConstraints={{ top: 0, bottom: 0 }}
+                        dragElastic={{ top: 0, bottom: 0.5 }}
+                        onDrag={(e, info) => dragY.set(info.offset.y)}
+                        onDragEnd={handleDragEnd}
+                        style={{ cursor: 'grab' }}
+                    >
+                        {/* Swipe indicator pill - visual affordance */}
+                        <div className="w-12 h-1.5 bg-white/50 rounded-full mb-3" />
+
+                        {/* Swipe hint text */}
+                        <span className="text-xs text-white/40 mb-2">Swipe down to close</span>
 
                         {/* App title with close button */}
                         <div className="w-full flex items-center justify-between px-5">
@@ -202,14 +242,14 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                                 <span className="text-white font-semibold text-lg">{title}</span>
                             </div>
                             <button
-                                onClick={onClose}
-                                className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center active:bg-white/20 transition-colors touch-manipulation"
-                                aria-label="Close"
+                                onClick={(e) => { e.stopPropagation(); onClose(); }}
+                                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center active:bg-white/20 transition-colors touch-manipulation"
+                                aria-label="Close app"
                             >
-                                <ChevronDown className="w-6 h-6 text-white" />
+                                <X className="w-5 h-5 text-white" />
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Desktop Title Bar */}
