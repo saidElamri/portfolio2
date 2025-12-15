@@ -66,20 +66,11 @@ const BootScreen = ({ onComplete }) => {
                     }}
                 />
 
-                {/* Radial glow */}
-                <motion.div
-                    className="absolute w-[600px] h-[600px] rounded-full"
+                {/* Radial glow - static for performance */}
+                <div
+                    className="absolute w-[600px] h-[600px] rounded-full opacity-60"
                     style={{
                         background: 'radial-gradient(circle, rgba(88, 166, 255, 0.08) 0%, transparent 70%)',
-                    }}
-                    animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.5, 0.8, 0.5],
-                    }}
-                    transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
                     }}
                 />
 
@@ -95,15 +86,8 @@ const BootScreen = ({ onComplete }) => {
                         className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center relative overflow-hidden"
                         style={{
                             background: 'linear-gradient(135deg, #58a6ff 0%, #a371f7 100%)',
+                            boxShadow: '0 0 40px rgba(88, 166, 255, 0.3)',
                         }}
-                        animate={{
-                            boxShadow: [
-                                '0 0 30px rgba(88, 166, 255, 0.3)',
-                                '0 0 60px rgba(163, 113, 247, 0.4)',
-                                '0 0 30px rgba(88, 166, 255, 0.3)',
-                            ],
-                        }}
-                        transition={{ duration: 2, repeat: Infinity }}
                     >
                         {/* Zellige pattern overlay */}
                         <div
@@ -171,22 +155,12 @@ const BootScreen = ({ onComplete }) => {
                         </p>
                     </motion.div>
 
-                    {/* Decorative elements */}
+                    {/* Decorative dots - simplified */}
                     <div className="flex gap-2 mt-8">
                         {[...Array(3)].map((_, i) => (
-                            <motion.div
+                            <div
                                 key={i}
-                                className="w-1.5 h-1.5 rounded-full bg-white/20"
-                                animate={{
-                                    backgroundColor: progress > (i + 1) * 33
-                                        ? ['rgba(88, 166, 255, 0.8)', 'rgba(163, 113, 247, 0.8)', 'rgba(88, 166, 255, 0.8)']
-                                        : 'rgba(255, 255, 255, 0.2)',
-                                }}
-                                transition={{
-                                    duration: 1.5,
-                                    repeat: Infinity,
-                                    delay: i * 0.2,
-                                }}
+                                className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${progress > (i + 1) * 33 ? 'bg-[#58a6ff]' : 'bg-white/20'}`}
                             />
                         ))}
                     </div>

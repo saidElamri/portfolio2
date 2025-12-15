@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import useSound, { sounds } from '../hooks/useSound';
 import useThemeStore, { themes } from '../stores/themeStore';
 
 const DockItem = ({ icon: Icon, label, onClick, isOpen, index, isMobile }) => {
-    const playHover = useSound(sounds.hover, 0.1);
-    const playClick = useSound(sounds.click, 0.3);
     const [isHovered, setIsHovered] = useState(false);
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
@@ -17,25 +14,18 @@ const DockItem = ({ icon: Icon, label, onClick, isOpen, index, isMobile }) => {
             transition={{ delay: 0.3 + index * 0.05, type: 'spring', stiffness: 400 }}
             whileHover={!isMobile ? { y: -10, scale: 1.15 } : {}}
             whileTap={{ scale: 0.95 }}
-            onClick={() => {
-                playClick();
-                onClick();
-            }}
-            onMouseEnter={() => { if (!isMobile) playHover(); setIsHovered(true); }}
+            onClick={onClick}
+            onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className="relative flex flex-col items-center group touch-manipulation"
             aria-label={label}
         >
-            {/* Reflection glow - desktop only */}
+            {/* Reflection glow - CSS transition only */}
             {!isMobile && (
-                <motion.div
-                    className="absolute -bottom-6 w-10 h-4 rounded-full blur-md"
+                <div
+                    className={`absolute -bottom-6 w-10 h-4 rounded-full blur-md transition-all duration-200
+                        ${isHovered ? 'opacity-40 scale-110' : isOpen ? 'opacity-20' : 'opacity-0'}`}
                     style={{ backgroundColor: theme.accent }}
-                    animate={{
-                        opacity: isHovered ? 0.4 : isOpen ? 0.2 : 0,
-                        scale: isHovered ? 1.2 : 1,
-                    }}
-                    transition={{ duration: 0.2 }}
                 />
             )}
 

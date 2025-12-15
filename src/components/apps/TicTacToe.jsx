@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { RefreshCw } from 'lucide-react';
-import useSound, { sounds } from '../../hooks/useSound';
 
 const TicTacToe = () => {
     const [board, setBoard] = useState(Array(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
-    const playClick = useSound(sounds.click, 0.5);
-    const playWin = useSound(sounds.startup, 1.0); // Reusing startup sound for win
 
     const calculateWinner = (squares) => {
         const lines = [
@@ -28,15 +25,11 @@ const TicTacToe = () => {
 
     const handleClick = (i) => {
         if (winner || board[i]) return;
-        playClick();
         const newBoard = [...board];
         newBoard[i] = xIsNext ? 'X' : 'O';
         setBoard(newBoard);
         setXIsNext(!xIsNext);
 
-        if (calculateWinner(newBoard)) {
-            playWin();
-        }
     };
 
     const resetGame = () => {

@@ -20,7 +20,7 @@ const CategoryFilter = ({ categories, activeCategory, onSelect }) => {
                 <motion.button
                     key={cat.id}
                     onClick={() => onSelect(cat.id)}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-medium flex items-center gap-1.5 whitespace-nowrap transition-all"
+                    className="px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 whitespace-nowrap transition-all"
                     style={{
                         backgroundColor: activeCategory === cat.id ? theme.accent : 'transparent',
                         color: activeCategory === cat.id ? '#fff' : theme.textMuted,
@@ -101,7 +101,7 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
                     {/* Badges */}
                     <div className="absolute top-2 left-2 right-2 flex justify-between items-start">
                         <span
-                            className="px-2 py-0.5 rounded-md text-[9px] font-medium backdrop-blur-sm"
+                            className="px-2.5 py-1 rounded-md text-xs font-medium backdrop-blur-sm"
                             style={{
                                 backgroundColor: `${accentColor}25`,
                                 color: accentColor,
@@ -113,7 +113,7 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
 
                         {project.featured && (
                             <span
-                                className="px-2 py-0.5 rounded-md text-[9px] font-medium backdrop-blur-sm flex items-center gap-1"
+                                className="px-2.5 py-1 rounded-md text-xs font-medium backdrop-blur-sm flex items-center gap-1"
                                 style={{
                                     backgroundColor: `${theme.accentSecondary}25`,
                                     color: theme.accentSecondary,
@@ -139,7 +139,7 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
                                         href={project.demo}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex-1 py-1.5 rounded-md text-[10px] font-medium flex items-center justify-center gap-1 backdrop-blur-md"
+                                        className="flex-1 py-2 rounded-md text-xs font-medium flex items-center justify-center gap-1.5 backdrop-blur-md"
                                         style={{
                                             background: `linear-gradient(135deg, ${accentColor}, ${theme.accentSecondary})`,
                                             color: '#fff',
@@ -154,7 +154,7 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
                                         href={project.github}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="py-1.5 px-2.5 rounded-md text-[10px] font-medium flex items-center justify-center backdrop-blur-md"
+                                        className="py-2 px-3 rounded-md text-xs font-medium flex items-center justify-center backdrop-blur-md"
                                         style={{
                                             backgroundColor: `${theme.surface}cc`,
                                             color: theme.text,
@@ -170,11 +170,11 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
                 </div>
 
                 {/* Content */}
-                <div className="p-3">
+                <div className="p-5">
                     <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                             <span className="text-base">{project.icon || '📁'}</span>
-                            <h3 className="font-semibold text-sm" style={{ color: theme.text }}>
+                            <h3 className="font-semibold text-base" style={{ color: theme.text }}>
                                 {project.title}
                             </h3>
                         </div>
@@ -187,18 +187,18 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
                     </div>
 
                     <p
-                        className="text-[11px] leading-relaxed mt-1.5 line-clamp-2"
+                        className="text-sm leading-relaxed mt-2 line-clamp-2"
                         style={{ color: theme.textMuted }}
                     >
                         {project.desc}
                     </p>
 
                     {/* Tech Stack */}
-                    <div className="flex flex-wrap gap-1 mt-2.5">
+                    <div className="flex flex-wrap gap-1.5 mt-3">
                         {project.tech.slice(0, 3).map((tech) => (
                             <span
                                 key={tech}
-                                className="px-1.5 py-0.5 rounded text-[9px] font-medium"
+                                className="px-2 py-1 rounded text-xs font-medium"
                                 style={{
                                     backgroundColor: theme.background,
                                     color: theme.textMuted,
@@ -210,7 +210,7 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
                         ))}
                         {project.tech.length > 3 && (
                             <span
-                                className="px-1.5 py-0.5 rounded text-[9px]"
+                                className="px-2 py-1 rounded text-xs"
                                 style={{ color: theme.textMuted }}
                             >
                                 +{project.tech.length - 3}
@@ -252,7 +252,7 @@ const BentoGrid = ({ projects, onOpenProject }) => {
 
             {/* Grid */}
             <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-3 h-full md:max-h-[50vh] overflow-y-auto pr-1 hide-scrollbar pb-20 md:pb-0"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full md:max-h-[55vh] overflow-y-auto pr-1 hide-scrollbar pb-20 md:pb-0"
                 layout
             >
                 <AnimatePresence mode="popLayout">
@@ -281,4 +281,4 @@ const BentoGrid = ({ projects, onOpenProject }) => {
     );
 };
 
-export default BentoGrid;
+export default React.memo(BentoGrid);

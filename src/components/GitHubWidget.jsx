@@ -66,7 +66,7 @@ const ContributionHeatmap = ({ contributions }) => {
                     Contribution Activity
                 </h4>
                 <span
-                    className="text-xs font-medium"
+                    className="text-sm font-medium"
                     style={{ color: theme.accent }}
                 >
                     {totalContributions} contributions
@@ -93,7 +93,7 @@ const ContributionHeatmap = ({ contributions }) => {
 
             {/* Legend */}
             <div className="flex items-center justify-end gap-1 mt-2">
-                <span className="text-[9px]" style={{ color: theme.textMuted }}>Less</span>
+                <span className="text-xs" style={{ color: theme.textMuted }}>Less</span>
                 {[0, 2, 5, 7, 10].map((level, i) => (
                     <div
                         key={i}
@@ -101,7 +101,7 @@ const ContributionHeatmap = ({ contributions }) => {
                         style={{ backgroundColor: getColor(level) }}
                     />
                 ))}
-                <span className="text-[9px]" style={{ color: theme.textMuted }}>More</span>
+                <span className="text-xs" style={{ color: theme.textMuted }}>More</span>
             </div>
         </div>
     );
@@ -159,7 +159,7 @@ const LanguageBar = ({ languages }) => {
                             style={{ backgroundColor: langColors[lang.name] || langColors.Other }}
                         />
                         <span
-                            className="text-[10px]"
+                            className="text-xs"
                             style={{ color: theme.textMuted }}
                         >
                             {lang.name} {Math.round((lang.count / total) * 100)}%
@@ -252,7 +252,7 @@ const GitHubWidget = () => {
     const totalForks = repos.reduce((acc, repo) => acc + (repo.forks_count || 0), 0);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Profile Header */}
             <div className="flex items-center gap-4">
                 <motion.div
@@ -296,7 +296,7 @@ const GitHubWidget = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-4">
                 {[
                     { icon: Code2, value: profile?.public_repos || 0, label: 'Repos' },
                     { icon: Star, value: totalStars, label: 'Stars' },
@@ -308,16 +308,16 @@ const GitHubWidget = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="rounded-xl p-3 text-center"
+                        className="rounded-xl p-4 text-center"
                         style={{
                             backgroundColor: theme.surface,
                             border: `1px solid ${theme.border}`
                         }}
                     >
-                        <stat.icon className="w-4 h-4 mx-auto" style={{ color: theme.accent }} />
-                        <div className="h-2" />
-                        <div className="text-lg font-bold" style={{ color: theme.text }}>{stat.value}</div>
-                        <div className="text-[10px] uppercase tracking-wider" style={{ color: theme.textMuted }}>
+                        <stat.icon className="w-5 h-5 mx-auto" style={{ color: theme.accent }} />
+                        <div className="h-3" />
+                        <div className="text-xl font-bold" style={{ color: theme.text }}>{stat.value}</div>
+                        <div className="text-xs uppercase tracking-wider" style={{ color: theme.textMuted }}>
                             {stat.label}
                         </div>
                     </motion.div>
@@ -326,7 +326,7 @@ const GitHubWidget = () => {
 
             {/* Contribution Heatmap */}
             <div
-                className="p-4 rounded-xl"
+                className="p-5 rounded-xl"
                 style={{
                     backgroundColor: theme.background,
                     border: `1px solid ${theme.border}`
@@ -338,7 +338,7 @@ const GitHubWidget = () => {
             {/* Language Breakdown */}
             {languages.length > 0 && (
                 <div
-                    className="p-4 rounded-xl"
+                    className="p-5 rounded-xl"
                     style={{
                         backgroundColor: theme.background,
                         border: `1px solid ${theme.border}`
@@ -391,7 +391,7 @@ const GitHubWidget = () => {
                                         {repo.name}
                                     </p>
                                     <p
-                                        className="text-[11px] truncate"
+                                        className="text-xs truncate"
                                         style={{ color: theme.textMuted }}
                                     >
                                         {repo.description || 'No description'}
@@ -399,7 +399,7 @@ const GitHubWidget = () => {
                                 </div>
                             </div>
                             <div
-                                className="flex items-center gap-3 text-[11px] shrink-0"
+                                className="flex items-center gap-3 text-xs shrink-0"
                                 style={{ color: theme.textMuted }}
                             >
                                 {repo.language && (
@@ -422,7 +422,7 @@ const GitHubWidget = () => {
 
             {/* Footer */}
             <div
-                className="text-center text-[11px] pt-4"
+                className="text-center text-xs pt-4"
                 style={{
                     color: theme.textMuted,
                     borderTop: `1px solid ${theme.border}`
@@ -435,4 +435,4 @@ const GitHubWidget = () => {
     );
 };
 
-export default GitHubWidget;
+export default React.memo(GitHubWidget);

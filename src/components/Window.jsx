@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Minus, Maximize2, Sparkles } from 'lucide-react';
+import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion';
+import { X, Minus, Maximize2, Sparkles, ChevronDown } from 'lucide-react';
 import useThemeStore, { themes } from '../stores/themeStore';
 
 const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinimize }) => {
@@ -78,8 +78,8 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                     borderRadius: 0,
                 } : {})
             }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+            exit={{ opacity: 0, scale: 0.98, y: 10 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 35 }}
             style={{
                 zIndex,
                 // Defensive check to prevent ReferenceError during hot reload
@@ -89,10 +89,11 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                 absolute flex flex-col
                 ${!(isMaximized || isMobile) ? 'w-[92vw] md:w-[560px] lg:w-[620px] rounded-2xl' : ''}
             `}
-            onMouseDown={onFocus}
+            onMouseDown={!isMobile ? onFocus : undefined}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             drag={!isMaximized && !isMobile} // Disable drag on mobile
+            dragListener={!isMobile} // Disable drag listener on mobile to allow clicks
             dragMomentum={false}
             dragConstraints={{ left: -300, right: 400, top: -50, bottom: 400 }}
             dragElastic={0.03}
@@ -130,7 +131,7 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
             <div
                 className={`
                     relative flex flex-col h-full overflow-hidden
-                    backdrop-blur-2xl backdrop-saturate-150
+                    backdrop-blur-lg backdrop-saturate-125
                     transition-all duration-300
                     ${!isMaximized ? 'rounded-2xl' : ''}
                 `}
@@ -150,78 +151,112 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                     }}
                 />
 
-                {/* Title Bar */}
-                <div
-                    className="flex items-center h-10 px-3 shrink-0 cursor-grab active:cursor-grabbing relative"
-                    style={{ borderBottom: `1px solid ${theme.border}` }}
-                    onDoubleClick={toggleMaximize}
-                >
-                    {/* Traffic Lights */}
-                    <div className="flex items-center gap-1.5 mr-3">
-                        <button
+                {/* Mobile Header - Pill handle and close button */}
+                {isMobile && (
+                    <div className="flex flex-col items-center pt-4 pb-3 shrink-0">
+                        {/* Swipe indicator pill */}
+                        <div
+                            className="w-10 h-1 bg-white/40 rounded-full mb-3 cursor-pointer"
                             onClick={onClose}
-                            className="group w-3 h-3 rounded-full bg-[#ff5f57] hover:bg-[#ff5f57]/80 transition-all flex items-center justify-center shadow-sm"
-                        >
-                            <X className="w-2 h-2 text-[#8b0000] opacity-0 group-hover:opacity-100" strokeWidth={3} />
-                        </button>
-                        <button
-                            onClick={onMinimize}
-                            className="group w-3 h-3 rounded-full bg-[#febc2e] hover:bg-[#febc2e]/80 transition-all flex items-center justify-center shadow-sm"
-                        >
-                            <Minus className="w-2 h-2 text-[#8b6508] opacity-0 group-hover:opacity-100" strokeWidth={3} />
-                        </button>
-                        <button
-                            onClick={toggleMaximize}
-                            className="group w-3 h-3 rounded-full bg-[#28c840] hover:bg-[#28c840]/80 transition-all flex items-center justify-center shadow-sm"
-                        >
-                            <Maximize2 className="w-1.5 h-1.5 text-[#0d5415] opacity-0 group-hover:opacity-100" strokeWidth={3} />
-                        </button>
-                    </div>
+                        />
 
-                    {/* Title */}
-                    <div className="flex-1 flex items-center justify-center gap-2 pr-12 overflow-hidden">
-                        <motion.span
-                            animate={{
-                                scale: isHovered ? [1, 1.1, 1] : 1,
-                            }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            {getWindowIcon()}
-                        </motion.span>
-                        <span
-                            className="text-[12px] font-medium select-none truncate transition-colors duration-200"
-                            style={{ color: isHovered ? theme.text : theme.textMuted }}
-                        >
-                            {title}
-                        </span>
-                        {isHovered && (
-                            <motion.div
-                                initial={{ scale: 0, rotate: -180 }}
-                                animate={{ scale: 1, rotate: 0 }}
-                                exit={{ scale: 0 }}
+                        {/* App title with close button */}
+                        <div className="w-full flex items-center justify-between px-5">
+                            <div className="flex items-center gap-2">
+                                <span className="text-lg">{getWindowIcon()}</span>
+                                <span className="text-white font-semibold text-lg">{title}</span>
+                            </div>
+                            <button
+                                onClick={onClose}
+                                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center active:bg-white/20 transition-colors"
                             >
-                                <Sparkles className="w-3 h-3 shrink-0" style={{ color: theme.accent }} />
-                            </motion.div>
-                        )}
+                                <ChevronDown className="w-5 h-5 text-white" />
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
+
+                {/* Desktop Title Bar */}
+                {!isMobile && (
+                    <div
+                        className="flex items-center h-10 px-3 shrink-0 cursor-grab active:cursor-grabbing relative"
+                        style={{ borderBottom: `1px solid ${theme.border}` }}
+                        onDoubleClick={toggleMaximize}
+                    >
+                        {/* Traffic Lights */}
+                        <div className="flex items-center gap-1.5 mr-3">
+                            <button
+                                onClick={onClose}
+                                className="group w-3 h-3 rounded-full bg-[#ff5f57] hover:bg-[#ff5f57]/80 transition-all flex items-center justify-center shadow-sm"
+                            >
+                                <X className="w-2 h-2 text-[#8b0000] opacity-0 group-hover:opacity-100" strokeWidth={3} />
+                            </button>
+                            <button
+                                onClick={onMinimize}
+                                className="group w-3 h-3 rounded-full bg-[#febc2e] hover:bg-[#febc2e]/80 transition-all flex items-center justify-center shadow-sm"
+                            >
+                                <Minus className="w-2 h-2 text-[#8b6508] opacity-0 group-hover:opacity-100" strokeWidth={3} />
+                            </button>
+                            <button
+                                onClick={toggleMaximize}
+                                className="group w-3 h-3 rounded-full bg-[#28c840] hover:bg-[#28c840]/80 transition-all flex items-center justify-center shadow-sm"
+                            >
+                                <Maximize2 className="w-1.5 h-1.5 text-[#0d5415] opacity-0 group-hover:opacity-100" strokeWidth={3} />
+                            </button>
+                        </div>
+
+                        {/* Title */}
+                        <div className="flex-1 flex items-center justify-center gap-2 pr-12 overflow-hidden">
+                            <motion.span
+                                animate={{
+                                    scale: isHovered ? [1, 1.1, 1] : 1,
+                                }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                {getWindowIcon()}
+                            </motion.span>
+                            <span
+                                className="text-[12px] font-medium select-none truncate transition-colors duration-200"
+                                style={{ color: isHovered ? theme.text : theme.textMuted }}
+                            >
+                                {title}
+                            </span>
+                            {isHovered && (
+                                <motion.div
+                                    initial={{ scale: 0, rotate: -180 }}
+                                    animate={{ scale: 1, rotate: 0 }}
+                                    exit={{ scale: 0 }}
+                                >
+                                    <Sparkles className="w-3 h-3 shrink-0" style={{ color: theme.accent }} />
+                                </motion.div>
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 {/* Content */}
                 <div
                     className={`
-                        flex-1 overflow-y-auto overflow-x-hidden p-4
-                        ${!isMaximized ? 'min-h-[260px] max-h-[52vh]' : 'h-full'}
+                        flex-1 overflow-y-auto overflow-x-hidden p-6
+                        ${!isMaximized ? 'min-h-[320px] max-h-[58vh]' : 'h-full'}
                     `}
                     style={{ color: theme.text }}
                 >
                     <div className="h-full">
                         {children}
                     </div>
+
+                    {/* Mobile Home Indicator */}
+                    {isMobile && (
+                        <div className="flex justify-center py-4">
+                            <div className="w-32 h-1 bg-white/30 rounded-full" />
+                        </div>
+                    )}
                 </div>
 
                 {/* Bottom accent line */}
                 <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-[2px]"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none"
                     style={{
                         background: `linear-gradient(90deg, transparent, ${theme.accent}, ${theme.accentSecondary}, ${theme.accent}, transparent)`
                     }}

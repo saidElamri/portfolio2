@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import useSound, { sounds } from '../../hooks/useSound';
 
 const Calculator = () => {
     const [display, setDisplay] = useState('0');
@@ -7,10 +6,8 @@ const Calculator = () => {
     const [prevValue, setPrevValue] = useState(null);
     const [newNumber, setNewNumber] = useState(true);
 
-    const playClick = useSound(sounds.click, 0.5);
 
     const handleNum = (num) => {
-        playClick();
         if (newNumber) {
             setDisplay(num.toString());
             setNewNumber(false);
@@ -20,14 +17,12 @@ const Calculator = () => {
     };
 
     const handleOp = (op) => {
-        playClick();
         setOperator(op);
         setPrevValue(parseFloat(display));
         setNewNumber(true);
     };
 
     const calculate = () => {
-        playClick();
         if (operator && prevValue !== null) {
             const current = parseFloat(display);
             let result = 0;
@@ -46,7 +41,6 @@ const Calculator = () => {
     };
 
     const clear = () => {
-        playClick();
         setDisplay('0');
         setOperator(null);
         setPrevValue(null);

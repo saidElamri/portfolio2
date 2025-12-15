@@ -7,7 +7,6 @@ import Dock from './components/Dock';
 import Window from './components/Window';
 import Grain from './components/Grain';
 import BootScreen from './components/BootScreen';
-import MusicPlayer from './components/MusicPlayer';
 import InteractiveTerminal from './components/InteractiveTerminal';
 import MatrixRain from './components/MatrixRain';
 import CommandPalette from './components/CommandPalette';
@@ -25,11 +24,12 @@ import { PreloaderProvider, useImagePreloader } from './context/PreloaderContext
 import { Spotlight, ClickRipple, useKonamiCode, Achievement, getGreeting, LiveIndicator, TypeWriter } from './components/Effects';
 import SEOManager from './components/SEOManager';
 import { projects } from './data/portfolio';
-import useSound, { sounds } from './hooks/useSound';
 import useThemeStore from './stores/themeStore';
 // Hooks
 import useVoiceCommands from './hooks/useVoiceCommands';
 import MobileNav from './components/MobileNav';
+import MobileStatusBar from './components/MobileStatusBar';
+import MobileHomeScreen from './components/MobileHomeScreen';
 import CalculatorApp from './components/apps/Calculator'; // Keep small apps eager if needed or lazy them too
 import TicTacToeApp from './components/apps/TicTacToe';
 import { availableApps } from './data/apps';
@@ -58,6 +58,18 @@ const PortfolioContent = () => {
   const [achievementData, setAchievementData] = useState({ title: '', description: '' });
   const [selectedProject, setSelectedProject] = useState(null);
 
+  // Mobile detection - initialize correctly from start
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < 768
+  );
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+
   // App Store Persistence
   const [installedApps, setInstalledApps] = useState(() => {
     const saved = localStorage.getItem('saidos-installed-apps');
@@ -77,24 +89,43 @@ const PortfolioContent = () => {
     localStorage.setItem('saidos-desktop-icons', JSON.stringify(iconPositions));
   }, [iconPositions]);
 
-  const [windows, setWindows] = useState({
-    about: { isOpen: true, zIndex: 1 },
-    projects: { isOpen: false, zIndex: 0 },
-    projectDetails: { isOpen: false, zIndex: 0 },
-    terminal: { isOpen: false, zIndex: 0 },
-    contact: { isOpen: false, zIndex: 0 },
-    music: { isOpen: true, zIndex: 1 },
-    ai: { isOpen: false, zIndex: 0 },
-    github: { isOpen: false, zIndex: 0 },
-    skills: { isOpen: false, zIndex: 0 },
-    notes: { isOpen: false, zIndex: 0 },
-    store: { isOpen: false, zIndex: 0 },
-    calculator: { isOpen: false, zIndex: 0 },
-    tictactoe: { isOpen: false, zIndex: 0 },
-    settings: { isOpen: false, zIndex: 0 }
+  // Windows state - on mobile, start with no windows open
+  const [windows, setWindows] = useState(() => {
+    const isMobileInit = typeof window !== 'undefined' && window.innerWidth < 768;
+    return {
+      about: { isOpen: !isMobileInit, zIndex: 1 },
+      projects: { isOpen: false, zIndex: 0 },
+      projectDetails: { isOpen: false, zIndex: 0 },
+      terminal: { isOpen: false, zIndex: 0 },
+      contact: { isOpen: false, zIndex: 0 },
+      music: { isOpen: !isMobileInit, zIndex: 1 },
+      ai: { isOpen: false, zIndex: 0 },
+      github: { isOpen: false, zIndex: 0 },
+      skills: { isOpen: false, zIndex: 0 },
+      notes: { isOpen: false, zIndex: 0 },
+      store: { isOpen: false, zIndex: 0 },
+      calculator: { isOpen: false, zIndex: 0 },
+      tictactoe: { isOpen: false, zIndex: 0 },
+      settings: { isOpen: false, zIndex: 0 }
+    };
   });
 
-  const playStartup = useSound(sounds.startup, 0.5);
+  // Close all windows when switching to mobile view
+  useEffect(() => {
+    if (isMobile) {
+      setWindows(prev => {
+        const newWindows = { ...prev };
+        Object.keys(newWindows).forEach(key => {
+          newWindows[key] = { ...newWindows[key], isOpen: false };
+        });
+        return newWindows;
+      });
+    }
+  }, [isMobile]);
+
+  // Check if any window is open (for mobile home screen vs app view)
+  const hasOpenWindow = Object.values(windows).some(w => w.isOpen);
+
 
   const [activeId, setActiveId] = useState('about');
 
@@ -112,29 +143,33 @@ const PortfolioContent = () => {
   }, []);
 
   const toggleWindow = useCallback((id) => {
+    const isMobileNow = typeof window !== 'undefined' && window.innerWidth < 768;
+
     setWindows(prev => {
       const isOpen = !prev[id].isOpen;
-      // We can call focusWindow here, but it's a dependency now.
-      // To avoid dependency cycle, we can inline the focus logic or separate it.
-      // Or just add focusWindow to dependency array (it is stable now).
+
       if (isOpen) {
         setActiveId(id);
-        // Inline focus logic for simplicity inside setter to avoid double setWindows
-        // Actually, double setWindows is fine, React batches.
+
+        // On mobile, close all other windows when opening a new one
+        if (isMobileNow) {
+          const newWindows = { ...prev };
+          Object.keys(newWindows).forEach(key => {
+            if (key !== id) {
+              newWindows[key] = { ...newWindows[key], isOpen: false, zIndex: 0 };
+            }
+          });
+          return {
+            ...newWindows,
+            [id]: { ...newWindows[id], isOpen: true, zIndex: 50 }
+          };
+        }
       }
+
       return {
         ...prev,
         [id]: { ...prev[id], isOpen }
       };
-    });
-    // Call focus separately to ensure zIndex update happens
-    setWindows(prev => {
-      if (!prev[id].isOpen) return prev; // If we just closed it, don't focus (wait, we just toggled it above... logic drift)
-      // Let's stick to the original logic structure but be careful with dependencies.
-      // The original called focusWindow(id) inside toggleWindow.
-      // We will do that in a useEffect or simply let the user click to focus? 
-      // No, opening usually focuses.
-      return prev;
     });
   }, []);
 
@@ -185,14 +220,12 @@ const PortfolioContent = () => {
     { label: t('nav.view'), icon: Github, onClick: () => { toggleWindow('github'); focusWindow('github'); } },
     { label: t('nav.view'), icon: Mail, onClick: () => { toggleWindow('contact'); focusWindow('contact'); } },
     { label: 'Settings', icon: Settings, onClick: () => { toggleWindow('settings'); focusWindow('settings'); } },
-    { label: 'Toggle Music Player', icon: Music, onClick: () => toggleWindow('music') },
     { label: t('nav.hackerMode'), icon: Code, onClick: () => setHackerMode(prev => !prev) },
     { label: t('nav.restart'), icon: Monitor, onClick: () => window.location.reload() },
   ];
 
   const handleBootComplete = () => {
     setBooted(true);
-    playStartup();
   };
 
   // Konami code easter egg
@@ -285,11 +318,27 @@ const PortfolioContent = () => {
 
       <Grain />
 
-      {/* Theme Picker */}
-      <ThemePicker />
+      {/* Theme Picker - desktop only */}
+      <div className="hidden md:block">
+        <ThemePicker />
+      </div>
 
-      {/* Top Menu Bar */}
-      <div className="absolute top-0 left-0 right-0 h-7 bg-black/40 backdrop-blur-2xl flex items-center justify-between px-4 text-[13px] font-medium z-50 border-b border-white/5 select-none">
+      {/* Mobile Status Bar */}
+      {isMobile && <MobileStatusBar />}
+
+      {/* Mobile Home Screen - show when no window is focused */}
+      {isMobile && !hasOpenWindow && (
+        <MobileHomeScreen
+          windows={windows}
+          toggleWindow={toggleWindow}
+          focusWindow={focusWindow}
+          installedApps={installedApps}
+          dockItems={dockItems}
+        />
+      )}
+
+      {/* Top Menu Bar - Desktop Only */}
+      <div className="hidden md:flex absolute top-0 left-0 right-0 h-7 bg-black/40 backdrop-blur-2xl items-center justify-between px-4 text-[13px] font-medium z-50 border-b border-white/5 select-none">
         <div className="flex items-center gap-1">
           {/* Apple-style Logo */}
           <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-white/10 cursor-pointer transition-colors">
@@ -471,7 +520,7 @@ const PortfolioContent = () => {
       />
 
       {/* Main Content Area */}
-      <div className="relative z-10 w-full h-full pointer-events-none">
+      <div className="relative z-10 w-full h-full">
 
         {/* Desktop Icons - Hidden on mobile */}
         <div className="hidden md:block">
@@ -499,8 +548,8 @@ const PortfolioContent = () => {
             onFocus={() => focusWindow('about')}
           >
             <HeroProfile
-              onViewProjects={() => { toggleWindow('projects'); focusWindow('projects'); }}
-              onContact={() => { toggleWindow('contact'); focusWindow('contact'); }}
+              onViewProjects={() => { console.log('onViewProjects called!'); toggleWindow('projects'); focusWindow('projects'); }}
+              onContact={() => { console.log('onContact called!'); toggleWindow('contact'); focusWindow('contact'); }}
             />
           </Window>
 
@@ -694,15 +743,6 @@ const PortfolioContent = () => {
             <SettingsWindow />
           </Window>
 
-          {/* Music Player Window (Small) */}
-          <div
-            key="window-music"
-            className="hidden md:block absolute top-20 right-10 z-0"
-            style={{ zIndex: windows.music.zIndex }}
-            onMouseDown={() => focusWindow('music')}
-          >
-            <MusicPlayer />
-          </div>
 
 
         </AnimatePresence>
@@ -713,7 +753,9 @@ const PortfolioContent = () => {
       <div className="hidden md:block">
         <Dock items={dockItems} />
       </div>
-      <MobileNav items={dockItems} />
+
+      {/* Mobile Navigation - show when a window is open */}
+      {isMobile && hasOpenWindow && <MobileNav items={dockItems} />}
     </div >
   );
 };

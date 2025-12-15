@@ -11,31 +11,31 @@ const SkillsSection = () => {
     const theme = themes[currentTheme];
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-4">
             {skills.map((category, catIndex) => (
                 <motion.div
                     key={category.title}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: catIndex * 0.1 }}
-                    className="p-3 rounded-xl"
-                    style={{ backgroundColor: theme.background, border: `1px solid ${theme.border}` }}
+                    className="p-4 rounded-xl"
+                    style={{ backgroundColor: theme.background }}
                 >
                     <div className="flex items-center gap-2 mb-2.5">
                         <span className="text-base">{category.icon}</span>
-                        <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: theme.text }}>
+                        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: theme.text }}>
                             {category.title}
                         </span>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                         {category.items.map((skill, skillIndex) => (
                             <div key={skill.name} className="space-y-1">
-                                <div className="flex justify-between text-[10px]">
+                                <div className="flex justify-between text-xs">
                                     <span style={{ color: theme.textMuted }}>{skill.name}</span>
                                     <span className="font-medium" style={{ color: theme.accent }}>{skill.level}%</span>
                                 </div>
-                                <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: theme.surface }}>
+                                <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: theme.surface }}>
                                     <motion.div
                                         className="h-full rounded-full"
                                         style={{ background: `linear-gradient(90deg, ${theme.accent}, ${theme.accentSecondary})` }}
@@ -59,27 +59,27 @@ const CertificatesSection = () => {
     const theme = themes[currentTheme];
 
     return (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
             {certificates.map((cert, index) => (
                 <motion.div
                     key={cert.id}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.08 }}
-                    className="p-3 rounded-xl group cursor-pointer"
-                    style={{ backgroundColor: theme.background, border: `1px solid ${theme.border}` }}
+                    className="p-4 rounded-xl group cursor-pointer"
+                    style={{ backgroundColor: theme.background }}
                     whileHover={{ scale: 1.02, borderColor: cert.color + '50' }}
                 >
                     <div
-                        className="w-9 h-9 rounded-lg flex items-center justify-center text-lg mb-2"
+                        className="w-10 h-10 rounded-lg flex items-center justify-center text-lg mb-3"
                         style={{ backgroundColor: `${cert.color}15` }}
                     >
                         {cert.icon}
                     </div>
-                    <h4 className="text-[11px] font-semibold line-clamp-1" style={{ color: theme.text }}>
+                    <h4 className="text-sm font-semibold line-clamp-1" style={{ color: theme.text }}>
                         {cert.title}
                     </h4>
-                    <div className="flex items-center gap-1 mt-1 text-[9px]" style={{ color: theme.textMuted }}>
+                    <div className="flex items-center gap-1 mt-1.5 text-xs" style={{ color: theme.textMuted }}>
                         <Award className="w-2.5 h-2.5" />
                         <span>{cert.issuer}</span>
                         <span>•</span>
@@ -104,7 +104,7 @@ const JourneySection = () => {
                 style={{ background: `linear-gradient(to bottom, ${theme.accent}, ${theme.accentSecondary})` }}
             />
 
-            <div className="space-y-3">
+            <div className="space-y-4">
                 {journey.map((item, index) => (
                     <motion.div
                         key={item.year}
@@ -115,7 +115,7 @@ const JourneySection = () => {
                     >
                         {/* Dot */}
                         <div
-                            className="relative z-10 w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 shadow-lg"
+                            className="relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-base shrink-0 shadow-lg"
                             style={{
                                 backgroundColor: theme.surface,
                                 border: `2px solid ${item.color}`,
@@ -127,26 +127,26 @@ const JourneySection = () => {
 
                         {/* Content */}
                         <div
-                            className="flex-1 p-2.5 rounded-xl"
-                            style={{ backgroundColor: theme.background, border: `1px solid ${theme.border}` }}
+                            className="flex-1 p-4 rounded-xl"
+                            style={{ backgroundColor: theme.background }}
                         >
                             <div className="flex items-center justify-between mb-1">
-                                <span className="text-[10px] font-bold" style={{ color: item.color }}>
+                                <span className="text-xs font-bold" style={{ color: item.color }}>
                                     {item.year}
                                 </span>
                                 <ChevronRight className="w-3 h-3" style={{ color: theme.textMuted }} />
                             </div>
-                            <h4 className="text-xs font-semibold" style={{ color: theme.text }}>
+                            <h4 className="text-sm font-semibold" style={{ color: theme.text }}>
                                 {item.title}
                             </h4>
-                            <p className="text-[10px] mt-0.5 line-clamp-2" style={{ color: theme.textMuted }}>
+                            <p className="text-xs mt-1 line-clamp-2" style={{ color: theme.textMuted }}>
                                 {item.description}
                             </p>
-                            <div className="flex flex-wrap gap-1 mt-2">
+                            <div className="flex flex-wrap gap-1.5 mt-3">
                                 {item.skills.slice(0, 3).map((skill) => (
                                     <span
                                         key={skill}
-                                        className="px-1.5 py-0.5 text-[8px] rounded font-medium"
+                                        className="px-2 py-1 text-xs rounded font-medium"
                                         style={{ backgroundColor: `${item.color}15`, color: item.color }}
                                     >
                                         {skill}
@@ -190,7 +190,7 @@ const SkillsWindow = () => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className="flex-1 py-2 px-3 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all"
+                            className="flex-1 py-2.5 px-4 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-all"
                             style={{
                                 background: activeTab === tab.id
                                     ? `linear-gradient(135deg, ${theme.accent}, ${theme.accentSecondary})`
@@ -206,7 +206,7 @@ const SkillsWindow = () => {
             </div>
 
             {/* Tab Content */}
-            <div className="max-h-[45vh] overflow-y-auto pr-1 hide-scrollbar">
+            <div className="max-h-[50vh] overflow-y-auto pr-1 hide-scrollbar">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={activeTab}

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useSound, { sounds } from '../hooks/useSound';
 import useThemeStore, { themes } from '../stores/themeStore';
 
 const InteractiveTerminal = ({ onHackerMode }) => {
@@ -15,15 +14,12 @@ const InteractiveTerminal = ({ onHackerMode }) => {
     const [commandHistory, setCommandHistory] = useState([]);
     const [historyIndex, setHistoryIndex] = useState(-1);
     const bottomRef = useRef(null);
-    const playType = useSound(sounds.type, 0.2);
-    const playEnter = useSound(sounds.click, 0.4);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [history]);
 
     const handleCommand = (cmd) => {
-        playEnter();
         const cleanCmd = cmd.trim().toLowerCase();
         let output = '';
 
@@ -421,8 +417,6 @@ const InteractiveTerminal = ({ onHackerMode }) => {
                 setHistoryIndex(-1);
                 setInput('');
             }
-        } else {
-            playType();
         }
     };
 

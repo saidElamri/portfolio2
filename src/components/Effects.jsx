@@ -3,13 +3,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore, { themes } from '../stores/themeStore';
 
 // Mouse spotlight that follows cursor with theme-colored glow
+// PERFORMANCE: Disabled on mobile, reduced blur
 const Spotlight = () => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isVisible, setIsVisible] = useState(false);
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
 
+    // Disable on mobile for performance
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
     useEffect(() => {
+        if (isMobile) return; // Skip event listeners on mobile
+
         const handleMouseMove = (e) => {
             setMousePos({ x: e.clientX, y: e.clientY });
             setIsVisible(true);
@@ -17,14 +23,17 @@ const Spotlight = () => {
 
         const handleMouseLeave = () => setIsVisible(false);
 
-        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
         window.addEventListener('mouseleave', handleMouseLeave);
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseleave', handleMouseLeave);
         };
-    }, []);
+    }, [isMobile]);
+
+    // Don't render on mobile
+    if (isMobile) return null;
 
     return (
         <motion.div
@@ -32,13 +41,14 @@ const Spotlight = () => {
             animate={{ opacity: isVisible ? 1 : 0 }}
         >
             <div
-                className="absolute rounded-full blur-[100px] transition-all duration-100"
+                className="absolute rounded-full blur-[40px] transition-all duration-100"
                 style={{
-                    width: '400px',
-                    height: '400px',
-                    left: mousePos.x - 200,
-                    top: mousePos.y - 200,
-                    background: `radial-gradient(circle, ${theme.accent}15 0%, transparent 70%)`,
+                    width: '300px',
+                    height: '300px',
+                    left: mousePos.x - 150,
+                    top: mousePos.y - 150,
+                    background: `radial-gradient(circle, ${theme.accent}10 0%, transparent 70%)`,
+                    willChange: 'transform',
                 }}
             />
         </motion.div>
@@ -46,12 +56,18 @@ const Spotlight = () => {
 };
 
 // Click ripple effect
+// PERFORMANCE: Disabled on mobile
 const ClickRipple = () => {
     const [ripples, setRipples] = useState([]);
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
 
+    // Disable on mobile for performance
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
     useEffect(() => {
+        if (isMobile) return; // Skip on mobile
+
         const handleClick = (e) => {
             const ripple = {
                 id: Date.now(),
@@ -66,7 +82,10 @@ const ClickRipple = () => {
 
         window.addEventListener('click', handleClick);
         return () => window.removeEventListener('click', handleClick);
-    }, []);
+    }, [isMobile]);
+
+    // Don't render on mobile
+    if (isMobile) return null;
 
     return (
         <div className="pointer-events-none fixed inset-0 z-[9999]">
