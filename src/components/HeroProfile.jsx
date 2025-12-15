@@ -32,9 +32,9 @@ const HeroProfile = ({ onViewProjects, onContact, onSkills }) => {
     );
 
     return (
-        <div className="flex flex-col h-full p-2">
+        <div className="flex flex-col justify-between h-full min-h-[500px] p-2">
             {/* Top Section: Profile */}
-            <div className="flex items-start gap-5 mb-auto">
+            <div className="flex items-start gap-5">
                 {/* Avatar */}
                 <div className="relative shrink-0">
                     <div
@@ -88,96 +88,101 @@ const HeroProfile = ({ onViewProjects, onContact, onSkills }) => {
                 </div>
             </div>
 
-            {/* Middle Section: Value Proposition */}
-            <div
-                className="p-6 rounded-xl my-6"
-                style={{ backgroundColor: theme.background }}
-            >
-                <p className="text-base leading-relaxed" style={{ color: theme.textMuted }}>
-                    I build <span style={{ color: theme.text, fontWeight: 500 }}>AI-powered web applications</span> that solve real problems.
-                    From neural networks to microservices, I focus on <span style={{ color: theme.text, fontWeight: 500 }}>systems that work</span>—not just UIs that look good.
-                </p>
-            </div>
-
-            {/* Navigation Buttons */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-                <NavButton
-                    onClick={onViewProjects}
-                    icon={FolderOpen}
-                    label="Projects"
-                    primary
-                />
-                <NavButton
-                    onClick={onSkills}
-                    icon={Layers}
-                    label="Stack"
-                />
-                <NavButton
-                    onClick={onContact}
-                    icon={Mail}
-                    label="Contact"
-                />
-            </div>
-
-            {/* Stats Section */}
-            <div
-                className="flex items-center justify-around py-6 rounded-xl mb-auto"
-                style={{ backgroundColor: theme.background }}
-            >
-                <div className="text-center">
-                    <div className="text-3xl font-bold" style={{ color: theme.accent }}>6</div>
-                    <div className="text-sm mt-1" style={{ color: theme.textMuted }}>Production Apps</div>
+            {/* Middle Section: Value Proposition + Buttons */}
+            <div className="space-y-6">
+                <div
+                    className="p-6 rounded-xl"
+                    style={{ backgroundColor: theme.background }}
+                >
+                    <p className="text-base leading-relaxed" style={{ color: theme.textMuted }}>
+                        I build <span style={{ color: theme.text, fontWeight: 500 }}>AI-powered web applications</span> that solve real problems.
+                        From neural networks to microservices, I focus on <span style={{ color: theme.text, fontWeight: 500 }}>systems that work</span>—not just UIs that look good.
+                    </p>
                 </div>
-                <div className="w-px h-12" style={{ backgroundColor: theme.border }} />
-                <div className="text-center">
-                    <div className="text-3xl font-bold" style={{ color: theme.accent }}>3</div>
-                    <div className="text-sm mt-1" style={{ color: theme.textMuted }}>AI Projects</div>
-                </div>
-                <div className="w-px h-12" style={{ backgroundColor: theme.border }} />
-                <div className="text-center">
-                    <div className="text-3xl font-bold" style={{ color: theme.accent }}>4</div>
-                    <div className="text-sm mt-1" style={{ color: theme.textMuted }}>Languages</div>
+
+                {/* Navigation Buttons */}
+                <div className="grid grid-cols-3 gap-4">
+                    <NavButton
+                        onClick={onViewProjects}
+                        icon={FolderOpen}
+                        label="Projects"
+                        primary
+                    />
+                    <NavButton
+                        onClick={onSkills}
+                        icon={Layers}
+                        label="Stack"
+                    />
+                    <NavButton
+                        onClick={onContact}
+                        icon={Mail}
+                        label="Contact"
+                    />
                 </div>
             </div>
 
-            {/* Bottom Section: Social Links */}
-            <div
-                className="flex items-center justify-center gap-6 pt-4 mt-auto"
-                style={{ borderTop: `1px solid ${theme.border}` }}
-            >
-                <a
-                    href={`https://github.com/${personalInfo.github}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-xl transition-colors hover:bg-white/5"
-                    style={{ color: theme.textMuted }}
+            {/* Bottom Section: Stats + Social */}
+            <div className="space-y-6">
+                {/* Stats Section */}
+                <div
+                    className="flex items-center justify-around py-6 rounded-xl"
+                    style={{ backgroundColor: theme.background }}
                 >
-                    <Github className="w-5 h-5" />
-                    <span className="text-sm">GitHub</span>
-                </a>
-                <a
-                    href={`https://linkedin.com/in/${personalInfo.linkedin}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-xl transition-colors hover:bg-white/5"
-                    style={{ color: theme.textMuted }}
+                    <div className="text-center">
+                        <div className="text-3xl font-bold" style={{ color: theme.accent }}>6</div>
+                        <div className="text-sm mt-1" style={{ color: theme.textMuted }}>Production Apps</div>
+                    </div>
+                    <div className="w-px h-12" style={{ backgroundColor: theme.border }} />
+                    <div className="text-center">
+                        <div className="text-3xl font-bold" style={{ color: theme.accent }}>3</div>
+                        <div className="text-sm mt-1" style={{ color: theme.textMuted }}>AI Projects</div>
+                    </div>
+                    <div className="w-px h-12" style={{ backgroundColor: theme.border }} />
+                    <div className="text-center">
+                        <div className="text-3xl font-bold" style={{ color: theme.accent }}>4</div>
+                        <div className="text-sm mt-1" style={{ color: theme.textMuted }}>Languages</div>
+                    </div>
+                </div>
+
+                {/* Social Links */}
+                <div
+                    className="flex items-center justify-center gap-6 pt-4"
+                    style={{ borderTop: `1px solid ${theme.border}` }}
                 >
-                    <Linkedin className="w-5 h-5" />
-                    <span className="text-sm">LinkedIn</span>
-                </a>
-                <a
-                    href="/resume.pdf"
-                    download="Said_Elamri_Resume.pdf"
-                    className="flex items-center gap-2 px-4 py-3 rounded-xl transition-colors"
-                    style={{
-                        color: theme.accent,
-                        backgroundColor: theme.accent + '15',
-                        border: `1px solid ${theme.accent}30`
-                    }}
-                >
-                    <Download className="w-4 h-4" />
-                    <span className="text-sm font-medium">Resume</span>
-                </a>
+                    <a
+                        href={`https://github.com/${personalInfo.github}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-3 rounded-xl transition-colors hover:bg-white/5"
+                        style={{ color: theme.textMuted }}
+                    >
+                        <Github className="w-5 h-5" />
+                        <span className="text-sm">GitHub</span>
+                    </a>
+                    <a
+                        href={`https://linkedin.com/in/${personalInfo.linkedin}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-3 rounded-xl transition-colors hover:bg-white/5"
+                        style={{ color: theme.textMuted }}
+                    >
+                        <Linkedin className="w-5 h-5" />
+                        <span className="text-sm">LinkedIn</span>
+                    </a>
+                    <a
+                        href="/resume.pdf"
+                        download="Said_Elamri_Resume.pdf"
+                        className="flex items-center gap-2 px-4 py-3 rounded-xl transition-colors"
+                        style={{
+                            color: theme.accent,
+                            backgroundColor: theme.accent + '15',
+                            border: `1px solid ${theme.accent}30`
+                        }}
+                    >
+                        <Download className="w-4 h-4" />
+                        <span className="text-sm font-medium">Resume</span>
+                    </a>
+                </div>
             </div>
         </div>
     );
