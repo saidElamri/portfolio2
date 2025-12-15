@@ -89,7 +89,6 @@ const ThemePicker = () => {
                                     ? 'bottom-0 left-0 right-0 rounded-t-3xl max-h-[80vh] pb-8'
                                     : 'bottom-28 right-24 w-80 rounded-2xl max-h-[70vh]'
                                 }
-                                overflow-hidden
                             `}
                             style={{
                                 backgroundColor: `color-mix(in srgb, ${theme.surface} 95%, transparent)`,
@@ -123,7 +122,7 @@ const ThemePicker = () => {
                             </div>
 
                             {/* Scrollable content */}
-                            <div className="overflow-y-auto max-h-[calc(80vh-120px)] p-5 space-y-6">
+                            <div className={`overflow-y-auto max-h-[calc(80vh-120px)] p-5 space-y-6 ${isMobile ? 'rounded-t-2xl' : 'rounded-b-xl'}`}>
                                 {/* Theme Grid */}
                                 <div>
                                     <p className="text-xs text-white/40 uppercase tracking-wider mb-3">
