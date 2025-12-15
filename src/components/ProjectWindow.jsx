@@ -189,7 +189,14 @@ const ProjectWindow = ({ project, onClose }) => {
                     </div>
                 </Section>
 
-                {/* 6. Outcome / Results */}
+                {/* 6. Failure Handling - Shows system thinking */}
+                {project.failureHandling && (
+                    <Section title="Failure Handling" icon={AlertCircle} color="#ef4444">
+                        <p>{project.failureHandling}</p>
+                    </Section>
+                )}
+
+                {/* 7. Outcome / Results */}
                 {project.outcome && (
                     <div
                         className="p-4 rounded-xl"

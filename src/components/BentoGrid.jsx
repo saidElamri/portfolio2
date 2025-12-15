@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Github, ExternalLink, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Github, ExternalLink, ArrowRight } from 'lucide-react';
 import { projectCategories } from '../data/portfolio';
 import useThemeStore, { themes } from '../stores/themeStore';
 
-// Category Filter with pill design
+// Category Filter - Clean, no hover effects
 const CategoryFilter = ({ categories, activeCategory, onSelect }) => {
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
@@ -13,229 +13,145 @@ const CategoryFilter = ({ categories, activeCategory, onSelect }) => {
 
     return (
         <div
-            className="flex gap-1.5 p-1.5 rounded-xl overflow-x-auto hide-scrollbar"
-            style={{ backgroundColor: theme.background, border: `1px solid ${theme.border}` }}
+            className="flex gap-1.5 p-1.5 rounded-lg overflow-x-auto hide-scrollbar"
+            style={{ backgroundColor: theme.background }}
         >
             {categories.map((cat) => (
-                <motion.button
+                <button
                     key={cat.id}
                     onClick={() => onSelect(cat.id)}
-                    className="px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 whitespace-nowrap transition-all"
+                    className="px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors"
                     style={{
                         backgroundColor: activeCategory === cat.id ? theme.accent : 'transparent',
                         color: activeCategory === cat.id ? '#fff' : theme.textMuted,
                     }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                 >
-                    <span>{cat.icon}</span>
-                    <span>{t(`projects.categories.${cat.id}`, cat.label)}</span>
-                </motion.button>
+                    {t(`projects.categories.${cat.id}`, cat.label)}
+                </button>
             ))}
         </div>
     );
 };
 
-// Project Card Component
-const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
-    const { t } = useTranslation();
-    const [isHovered, setIsHovered] = useState(false);
-    const [imageError, setImageError] = useState(false);
+// Project Card - Text-first, system-first, no visual noise
+const ProjectCard = ({ project, index, onOpenProject }) => {
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
     const accentColor = project.color || theme.accent;
 
     return (
         <motion.article
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ delay: index * 0.08, duration: 0.4 }}
-            className={`group relative ${featured ? 'md:col-span-2 md:row-span-2' : ''}`}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            exit={{ opacity: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.2 }}
+            className="group cursor-pointer"
+            onClick={() => onOpenProject && onOpenProject(project)}
         >
-            {/* Glow effect */}
-            <motion.div
-                className="absolute -inset-0.5 rounded-2xl opacity-0 blur-md transition-opacity duration-300"
-                style={{ background: `linear-gradient(135deg, ${accentColor}40, ${theme.accentSecondary}40)` }}
-                animate={{ opacity: isHovered ? 0.6 : 0 }}
-            />
-
-            <motion.div
-                className="relative overflow-hidden rounded-xl h-full"
+            <div
+                className="p-5 rounded-xl h-full transition-colors"
                 style={{
                     backgroundColor: theme.surface,
-                    border: `1px solid ${isHovered ? accentColor + '60' : theme.border}`, // Crisper border
-                    boxShadow: isHovered
-                        ? `0 12px 40px -12px ${accentColor}30, 0 0 0 1px ${accentColor}20`
-                        : '0 2px 10px rgba(0,0,0,0.02)' // Subtle depth normally
+                    border: `1px solid ${theme.border}`,
                 }}
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => onOpenProject && onOpenProject(project)}
             >
-                {/* Image Preview */}
-                <div className="relative h-32 overflow-hidden">
-                    {!imageError && project.image ? (
-                        <motion.img
-                            src={project.image}
-                            alt={project.title}
-                            className="w-full h-full object-cover"
-                            style={{ filter: isHovered ? 'brightness(1.05)' : 'brightness(0.85)' }}
-                            onError={() => setImageError(true)}
-                            animate={{ scale: isHovered ? 1.08 : 1 }}
-                            transition={{ duration: 0.4 }}
-                        />
-                    ) : (
-                        <div
-                            className="w-full h-full flex items-center justify-center text-5xl"
-                            style={{
-                                background: `linear-gradient(135deg, ${accentColor}15, ${theme.accentSecondary}15)`
-                            }}
-                        >
-                            {project.icon || '📁'}
-                        </div>
-                    )}
-
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-
-                    {/* Badges */}
-                    <div className="absolute top-2 left-2 right-2 flex justify-between items-start">
-                        <span
-                            className="px-2.5 py-1 rounded-md text-xs font-medium backdrop-blur-sm"
-                            style={{
-                                backgroundColor: `${accentColor}20`, // Slightly clearer bg
-                                color: accentColor,
-                                border: `1px solid ${accentColor}20`,
-                                backdropFilter: 'blur(4px)',
-                                boxShadow: `0 2px 8px -2px ${accentColor}20`
-                            }}
-                        >
-                            {project.category}
-                        </span>
-
-                        {project.featured && (
-                            <span
-                                className="px-2.5 py-1 rounded-md text-xs font-medium backdrop-blur-sm flex items-center gap-1"
-                                style={{
-                                    backgroundColor: `${theme.accentSecondary}25`,
-                                    color: theme.accentSecondary,
-                                }}
-                            >
-                                <Sparkles className="w-2.5 h-2.5" />
-                                {t('projects.featured')}
-                            </span>
-                        )}
-                    </div>
-
-                    {/* Action buttons */}
-                    <AnimatePresence>
-                        {isHovered && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 10 }}
-                                className="absolute bottom-2 left-2 right-2 flex gap-1.5"
-                            >
-                                {project.demo && project.demo !== '#' && (
-                                    <a
-                                        href={project.demo}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex-1 py-2 rounded-md text-xs font-medium flex items-center justify-center gap-1.5 backdrop-blur-md"
-                                        style={{
-                                            background: `linear-gradient(135deg, ${accentColor}, ${theme.accentSecondary})`,
-                                            color: '#fff',
-                                        }}
-                                    >
-                                        <ExternalLink className="w-3 h-3" />
-                                        {t('projects.demo')}
-                                    </a>
-                                )}
-                                {project.github && (
-                                    <a
-                                        href={project.github}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="py-2 px-3 rounded-md text-xs font-medium flex items-center justify-center backdrop-blur-md"
-                                        style={{
-                                            backgroundColor: `${theme.surface}cc`,
-                                            color: theme.text,
-                                            border: `1px solid ${theme.border}`,
-                                        }}
-                                    >
-                                        <Github className="w-3 h-3" />
-                                    </a>
-                                )}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-
-                {/* Content */}
-                <div className="p-5">
-                    <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                            <span className="text-base">{project.icon || '📁'}</span>
-                            <h3 className="font-semibold text-base" style={{ color: theme.text }}>
+                {/* Header: Icon + Title + Category */}
+                <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2">
+                        <span className="text-lg">{project.icon}</span>
+                        <div>
+                            <h3 className="text-sm font-semibold" style={{ color: theme.text }}>
                                 {project.title}
                             </h3>
+                            <span
+                                className="text-xs"
+                                style={{ color: accentColor }}
+                            >
+                                {project.category}
+                            </span>
                         </div>
-                        <motion.div animate={{ rotate: isHovered ? 45 : 0 }}>
-                            <ArrowUpRight
-                                className="w-3.5 h-3.5"
-                                style={{ color: isHovered ? accentColor : theme.textMuted }}
-                            />
-                        </motion.div>
                     </div>
-
-                    <p
-                        className="text-sm leading-relaxed mt-2 line-clamp-2"
+                    <ArrowRight
+                        className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"
                         style={{ color: theme.textMuted }}
-                    >
-                        {project.desc}
-                    </p>
-
-                    {/* Tech Stack */}
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                        {project.tech.slice(0, 3).map((tech) => (
-                            <span
-                                key={tech}
-                                className="px-2 py-1 rounded text-xs font-medium"
-                                style={{
-                                    backgroundColor: theme.background,
-                                    color: theme.textMuted,
-                                    border: `1px solid ${theme.border}`
-                                }}
-                            >
-                                {tech}
-                            </span>
-                        ))}
-                        {project.tech.length > 3 && (
-                            <span
-                                className="px-2 py-1 rounded text-xs"
-                                style={{ color: theme.textMuted }}
-                            >
-                                +{project.tech.length - 3}
-                            </span>
-                        )}
-                    </div>
+                    />
                 </div>
 
-                {/* Bottom accent line */}
-                <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-0.5"
-                    style={{ background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)` }}
-                    animate={{ opacity: isHovered ? 0.8 : 0 }}
-                />
-            </motion.div>
+                {/* Problem Statement - Lead with this */}
+                <p
+                    className="text-xs leading-relaxed mb-3 line-clamp-2"
+                    style={{ color: theme.textMuted }}
+                >
+                    {project.problem || project.desc}
+                </p>
+
+                {/* Architecture One-liner */}
+                {project.architecture && (
+                    <p
+                        className="text-xs mb-3 line-clamp-1"
+                        style={{ color: theme.text }}
+                    >
+                        {project.architecture.overview}
+                    </p>
+                )}
+
+                {/* Tech Stack - Compact */}
+                <div className="flex flex-wrap gap-1">
+                    {project.tech.slice(0, 4).map((tech) => (
+                        <span
+                            key={tech}
+                            className="px-2 py-0.5 rounded text-xs"
+                            style={{
+                                backgroundColor: theme.background,
+                                color: theme.textMuted,
+                                border: `1px solid ${theme.border}`
+                            }}
+                        >
+                            {tech}
+                        </span>
+                    ))}
+                    {project.tech.length > 4 && (
+                        <span className="px-2 py-0.5 text-xs" style={{ color: theme.textMuted }}>
+                            +{project.tech.length - 4}
+                        </span>
+                    )}
+                </div>
+
+                {/* Links - Only show on projects with live demos */}
+                {(project.demo && project.demo !== '#') && (
+                    <div className="flex gap-2 mt-3 pt-3" style={{ borderTop: `1px solid ${theme.border}` }}>
+                        <a
+                            href={project.demo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1 text-xs transition-colors hover:opacity-80"
+                            style={{ color: accentColor }}
+                        >
+                            <ExternalLink className="w-3 h-3" />
+                            Demo
+                        </a>
+                        {project.github && (
+                            <a
+                                href={project.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="flex items-center gap-1 text-xs transition-colors hover:opacity-80"
+                                style={{ color: theme.textMuted }}
+                            >
+                                <Github className="w-3 h-3" />
+                                Code
+                            </a>
+                        )}
+                    </div>
+                )}
+            </div>
         </motion.article>
     );
 };
 
-// Main BentoGrid Component
+// Main Grid Component
 const BentoGrid = ({ projects, onOpenProject }) => {
     const [activeCategory, setActiveCategory] = useState('all');
     const { currentTheme } = useThemeStore();
@@ -255,23 +171,19 @@ const BentoGrid = ({ projects, onOpenProject }) => {
                 onSelect={setActiveCategory}
             />
 
-            {/* Grid */}
-            <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full md:max-h-[55vh] overflow-y-auto pr-1 hide-scrollbar pb-20 md:pb-0"
-                layout
-            >
+            {/* Project Grid - Simple 2-column */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <AnimatePresence mode="popLayout">
                     {filteredProjects.map((project, index) => (
                         <ProjectCard
                             key={project.id}
                             project={project}
                             index={index}
-                            featured={project.featured && index === 0}
                             onOpenProject={onOpenProject}
                         />
                     ))}
                 </AnimatePresence>
-            </motion.div>
+            </div>
 
             {/* Empty state */}
             {filteredProjects.length === 0 && (
@@ -279,11 +191,11 @@ const BentoGrid = ({ projects, onOpenProject }) => {
                     className="text-center py-12 text-sm"
                     style={{ color: theme.textMuted }}
                 >
-                    {t('projects.noProjects')}
+                    {t('projects.noProjects', 'No projects in this category')}
                 </div>
             )}
         </div>
     );
 };
 
-export default React.memo(BentoGrid);
+export default BentoGrid;
