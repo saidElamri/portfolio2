@@ -365,10 +365,8 @@ const PortfolioContent = () => {
 
       <Grain />
 
-      {/* Theme Picker - desktop only */}
-      <div className="hidden md:block">
-        <ThemePicker />
-      </div>
+      {/* Theme Picker - responsive, works on both mobile and desktop */}
+      <ThemePicker />
 
       {/* Mobile Status Bar */}
       {isMobile && <MobileStatusBar />}
