@@ -92,22 +92,26 @@ const PortfolioContent = () => {
   // Windows state - on mobile, start with no windows open
   const [windows, setWindows] = useState(() => {
     const isMobileInit = typeof window !== 'undefined' && window.innerWidth < 768;
+    // Using CSS variable values: --z-window = 40, --z-window-active = 50
     return {
-      about: { isOpen: !isMobileInit, zIndex: 1 },
-      projects: { isOpen: false, zIndex: 0 },
-      projectDetails: { isOpen: false, zIndex: 0 },
-      terminal: { isOpen: false, zIndex: 0 },
-      contact: { isOpen: false, zIndex: 0 },
-      ai: { isOpen: false, zIndex: 0 },
-      github: { isOpen: false, zIndex: 0 },
-      skills: { isOpen: false, zIndex: 0 },
-      notes: { isOpen: false, zIndex: 0 },
-      store: { isOpen: false, zIndex: 0 },
-      calculator: { isOpen: false, zIndex: 0 },
-      tictactoe: { isOpen: false, zIndex: 0 },
-      settings: { isOpen: false, zIndex: 0 }
+      about: { isOpen: !isMobileInit, zIndex: 50 },
+      projects: { isOpen: false, zIndex: 40 },
+      projectDetails: { isOpen: false, zIndex: 40 },
+      terminal: { isOpen: false, zIndex: 40 },
+      contact: { isOpen: false, zIndex: 40 },
+      ai: { isOpen: false, zIndex: 40 },
+      github: { isOpen: false, zIndex: 40 },
+      skills: { isOpen: false, zIndex: 40 },
+      notes: { isOpen: false, zIndex: 40 },
+      store: { isOpen: false, zIndex: 40 },
+      calculator: { isOpen: false, zIndex: 40 },
+      tictactoe: { isOpen: false, zIndex: 40 },
+      settings: { isOpen: false, zIndex: 40 }
     };
   });
+
+  // Incremental z-index counter to ensure new windows always on top
+  const zCounter = useRef(50);
 
   // Close all windows when switching to mobile view
   useEffect(() => {
@@ -130,15 +134,13 @@ const PortfolioContent = () => {
 
   const focusWindow = useCallback((id) => {
     setActiveId(id);
-    setWindows(prev => {
-      const newWindows = { ...prev };
-      Object.keys(newWindows).forEach(key => {
-        // On mobile, force max z-index
-        const isMobile = window.innerWidth < 768;
-        newWindows[key].zIndex = key === id ? 50 : (isMobile ? 0 : 1);
-      });
-      return newWindows;
-    });
+    // Increment counter and assign to focused window
+    zCounter.current += 1;
+    const newZ = zCounter.current;
+    setWindows(prev => ({
+      ...prev,
+      [id]: { ...prev[id], zIndex: newZ }
+    }));
   }, []);
 
   const toggleWindow = useCallback((id) => {
@@ -149,20 +151,28 @@ const PortfolioContent = () => {
 
       if (isOpen) {
         setActiveId(id);
+        // Increment counter for new focused window
+        zCounter.current += 1;
+        const newZ = zCounter.current;
 
         // On mobile, close all other windows when opening a new one
         if (isMobileNow) {
           const newWindows = { ...prev };
           Object.keys(newWindows).forEach(key => {
             if (key !== id) {
-              newWindows[key] = { ...newWindows[key], isOpen: false, zIndex: 0 };
+              newWindows[key] = { ...newWindows[key], isOpen: false };
             }
           });
           return {
             ...newWindows,
-            [id]: { ...newWindows[id], isOpen: true, zIndex: 50 }
+            [id]: { ...newWindows[id], isOpen: true, zIndex: newZ }
           };
         }
+
+        return {
+          ...prev,
+          [id]: { ...prev[id], isOpen: true, zIndex: newZ }
+        };
       }
 
       return {

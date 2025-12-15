@@ -53,8 +53,13 @@ const MobileHomeScreen = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 top-14 pb-8 px-5 md:hidden overflow-auto z-40"
+            className="fixed inset-0 md:hidden overflow-auto"
             style={{
+                top: 'var(--mobile-nav-height)',
+                paddingBottom: 'calc(var(--dock-height) + var(--safe-area-bottom, 0px) + 8px)',
+                paddingLeft: 'calc(var(--safe-area-left, 0px) + 20px)',
+                paddingRight: 'calc(var(--safe-area-right, 0px) + 20px)',
+                zIndex: 'var(--z-fixed)',
                 background: `linear-gradient(180deg, ${theme.surface}99 0%, ${theme.background} 100%)`,
                 pointerEvents: 'auto'
             }}

@@ -104,8 +104,11 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                 // Force full screen on mobile or if maximized
                 ...((isMaximized || isMobile) ? {
                     width: '100vw',
-                    height: isMobile ? 'calc(100dvh - 90px)' : 'calc(100vh - 28px)', // More room for dock
-                    top: isMobile ? '0px' : '28px',
+                    // Use CSS variable for consistent layout accounting
+                    height: isMobile
+                        ? 'calc(100dvh - var(--mobile-nav-height) - var(--dock-height) - var(--safe-area-bottom, 0px))'
+                        : 'calc(100vh - var(--nav-height))',
+                    top: isMobile ? 'var(--mobile-nav-height)' : 'var(--nav-height)',
                     left: 0,
                     x: 0,
                     y: 0,
