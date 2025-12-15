@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useThemeStore, { themes } from '../stores/themeStore';
+import useAppStore from '../stores/appStore';
+import { X } from 'lucide-react';
 
 const DockItem = ({ icon: Icon, label, onClick, isOpen, index, isMobile }) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -114,8 +116,14 @@ const DockItem = ({ icon: Icon, label, onClick, isOpen, index, isMobile }) => {
 const Dock = ({ items }) => {
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
+    const closeAllApps = useAppStore(state => state.closeAllApps);
+    const openApps = useAppStore(state => state.openApps);
+
     const [isHovered, setIsHovered] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [longPressProgress, setLongPressProgress] = useState(0);
+    const longPressTimer = useRef(null);
+    const progressInterval = useRef(null);
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -123,6 +131,35 @@ const Dock = ({ items }) => {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    const hasOpenApps = openApps.length > 0;
+
+    // Long press handlers for Close All
+    const handleLongPressStart = () => {
+        if (!hasOpenApps) return;
+
+        setLongPressProgress(0);
+        let progress = 0;
+
+        progressInterval.current = setInterval(() => {
+            progress += 2;
+            setLongPressProgress(progress);
+
+            if (progress >= 100) {
+                clearInterval(progressInterval.current);
+                closeAllApps();
+                setLongPressProgress(0);
+            }
+        }, 20); // 1 second total (50 * 20ms)
+    };
+
+    const handleLongPressEnd = () => {
+        if (progressInterval.current) {
+            clearInterval(progressInterval.current);
+            progressInterval.current = null;
+        }
+        setLongPressProgress(0);
+    };
 
     return (
         <div className="fixed bottom-3 md:bottom-5 left-1/2 -translate-x-1/2 z-50 px-2 pb-[env(safe-area-inset-bottom)]">
@@ -156,7 +193,29 @@ const Dock = ({ items }) => {
                             ? '0 8px 24px rgba(0,0,0,0.3)'
                             : '0 20px 50px -12px rgba(0,0,0,0.4), 0 8px 24px -8px rgba(0,0,0,0.3)'
                     }}
+                    onTouchStart={isMobile ? handleLongPressStart : undefined}
+                    onTouchEnd={isMobile ? handleLongPressEnd : undefined}
+                    onTouchCancel={isMobile ? handleLongPressEnd : undefined}
                 >
+                    {/* Long press progress indicator */}
+                    {longPressProgress > 0 && (
+                        <motion.div
+                            className="absolute inset-0 rounded-2xl overflow-hidden"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                        >
+                            <div
+                                className="h-full bg-red-500/30 transition-all duration-100"
+                                style={{ width: `${longPressProgress}%` }}
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-xs text-white font-medium flex items-center gap-1">
+                                    <X className="w-3 h-3" /> Close All
+                                </span>
+                            </div>
+                        </motion.div>
+                    )}
+
                     {/* Separator - desktop only */}
                     {!isMobile && <div className="w-px h-6 bg-white/10 mr-1" />}
 
@@ -179,3 +238,4 @@ const Dock = ({ items }) => {
 };
 
 export default Dock;
+
