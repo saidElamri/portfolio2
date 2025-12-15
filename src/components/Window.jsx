@@ -313,18 +313,18 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                 {/* Content */}
                 <div
                     className={`
-                        flex-1 overflow-y-auto overflow-x-hidden p-6
-                        ${!isMaximized ? 'min-h-[320px] max-h-[58vh]' : 'h-full'}
+                        flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col min-h-0
+                        ${!isMaximized ? 'min-h-[320px] max-h-[60vh]' : ''}
                     `}
                     style={{ color: theme.text }}
                 >
-                    <div className="h-full">
+                    <div className="flex-1 flex flex-col min-h-0">
                         {children}
                     </div>
 
                     {/* Mobile Home Indicator */}
                     {isMobile && (
-                        <div className="flex justify-center py-4">
+                        <div className="flex justify-center py-4 shrink-0">
                             <div className="w-32 h-1 bg-white/30 rounded-full" />
                         </div>
                     )}
