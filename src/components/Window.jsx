@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { motion, useMotionValue, useTransform, useAnimation, PanInfo } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion';
 import { X, Minus, Maximize2, Sparkles, ChevronDown } from 'lucide-react';
 import useThemeStore, { themes } from '../stores/themeStore';
 

@@ -31,8 +31,8 @@
   
   /* Layout Shell Heights */
   --nav-height: 28px;
-  --mobile-nav-height: 56px;
-  --dock-height: 72px;
+  --mobile-nav-height: 64px; /* Increased to properly clear the mobile header */
+  --dock-height: 90px; /* Increased to account for mobile tab bar + padding */
   --mobile-home-indicator: 20px;
   
   /* Dynamic viewport height fallback */
