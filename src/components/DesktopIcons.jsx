@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const DesktopIcons = memo(({ installedApps, availableApps, iconPositions, setIconPositions, toggleWindow, focusWindow }) => {
     return (
-        <div className="absolute top-8 left-4 bottom-24 flex flex-col flex-wrap content-start gap-4 z-10 pointer-events-auto">
+        <div className="absolute top-8 left-4 bottom-24 flex flex-col flex-wrap content-start gap-4 z-0 pointer-events-auto">
             {installedApps.map(appId => {
                 const app = availableApps.find(a => a.id === appId);
                 if (!app) return null;

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import AiAssistant from './components/AiAssistant';
-import { Terminal, FolderOpen, Mail, User, Github, Linkedin, Music, Code, Monitor, Bot, Briefcase, Download, Copy, Check, FileText, ShoppingBag, Calculator, Gamepad2, Settings, Mic, MicOff } from 'lucide-react';
+import { Terminal, FolderOpen, Mail, User, Github, Linkedin, Code, Monitor, Bot, Briefcase, Download, Copy, Check, FileText, ShoppingBag, Calculator, Gamepad2, Settings, Mic, MicOff } from 'lucide-react';
 import Dock from './components/Dock';
 import Window from './components/Window';
 import Grain from './components/Grain';
@@ -12,7 +12,7 @@ import MatrixRain from './components/MatrixRain';
 import CommandPalette from './components/CommandPalette';
 import DesktopIcons from './components/DesktopIcons';
 import ContextMenu from './components/ContextMenu';
-import HeroScene from './components/HeroScene';
+// import HeroScene from './components/HeroScene'; // Disabled - using static backgrounds
 import BentoGrid from './components/BentoGrid';
 import ThemePicker from './components/ThemePicker';
 import GitHubWidget from './components/GitHubWidget';
@@ -98,7 +98,6 @@ const PortfolioContent = () => {
       projectDetails: { isOpen: false, zIndex: 0 },
       terminal: { isOpen: false, zIndex: 0 },
       contact: { isOpen: false, zIndex: 0 },
-      music: { isOpen: !isMobileInit, zIndex: 1 },
       ai: { isOpen: false, zIndex: 0 },
       github: { isOpen: false, zIndex: 0 },
       skills: { isOpen: false, zIndex: 0 },
@@ -194,7 +193,6 @@ const PortfolioContent = () => {
     { id: 'terminal', label: t('windows.terminal'), icon: Terminal, onClick: () => toggleWindow('terminal'), isOpen: windows.terminal.isOpen },
     { id: 'ai', label: t('windows.ai'), icon: Bot, onClick: () => toggleWindow('ai'), isOpen: windows.ai.isOpen },
     { id: 'github', label: t('windows.github'), icon: Github, onClick: () => toggleWindow('github'), isOpen: windows.github.isOpen },
-    { id: 'music', label: 'Music', icon: Music, onClick: () => toggleWindow('music'), isOpen: windows.music.isOpen },
     { id: 'contact', label: t('windows.contact'), icon: Mail, onClick: () => toggleWindow('contact'), isOpen: windows.contact.isOpen },
   ];
 
@@ -289,13 +287,46 @@ const PortfolioContent = () => {
 
   const greeting = getGreeting();
 
-  return (
-    <div className="relative w-full h-screen overflow-hidden font-sans selection:bg-white/20 text-white cursor-default transition-colors duration-300" style={{ backgroundColor: 'var(--color-background)' }}>
-      {/* Mouse Spotlight Effect */}
-      <Spotlight />
+  // Platform-specific wallpaper backgrounds (no animation)
+  // iOS 17 inspired gradient for mobile
+  const mobileBackground = `
+    linear-gradient(145deg, 
+      #1e0533 0%, 
+      #2d1b4e 15%, 
+      #522580 30%, 
+      #6b3fa0 45%, 
+      #8b5cf6 55%, 
+      #a855f7 65%, 
+      #c084fc 75%, 
+      #e879f9 85%, 
+      #f0abfc 95%,
+      #fae8ff 100%
+    )
+  `;
+  // macOS Sonoma inspired gradient for desktop
+  const desktopBackground = `
+    linear-gradient(180deg, 
+      #0c0c1c 0%, 
+      #1a1a3e 15%, 
+      #252560 30%, 
+      #1e3a5f 50%, 
+      #2d4a6f 65%, 
+      #3d5a80 80%, 
+      #1a1a3e 100%
+    )
+  `;
 
-      {/* Click Ripple Effect */}
-      <ClickRipple />
+  return (
+    <div
+      className="relative w-full h-screen overflow-hidden font-sans selection:bg-white/20 text-white cursor-default transition-colors duration-300"
+      style={{
+        background: isMobile ? mobileBackground : desktopBackground,
+        backgroundColor: 'var(--color-background)'
+      }}
+    >
+      {/* Decorative effects removed for cleaner professional presentation */}
+      {/* <Spotlight /> */}
+      {/* <ClickRipple /> */}
 
       {/* SEO Manager */}
       <SEOManager activeWindow={activeId} />
@@ -308,10 +339,12 @@ const PortfolioContent = () => {
         onClose={() => setShowAchievement(false)}
       />
 
-      {/* 3D Hero Scene Background */}
+      {/* 3D Hero Scene Background - Disabled for static wallpaper */}
+      {/* 
       <div className={`absolute inset-0 transition-opacity duration-1000 ${hackerMode ? 'opacity-0' : 'opacity-100'}`}>
         <HeroScene />
-      </div>
+      </div> 
+      */}
 
       {/* Matrix Rain Effect */}
       {hackerMode && <MatrixRain />}
@@ -548,8 +581,9 @@ const PortfolioContent = () => {
             onFocus={() => focusWindow('about')}
           >
             <HeroProfile
-              onViewProjects={() => { console.log('onViewProjects called!'); toggleWindow('projects'); focusWindow('projects'); }}
-              onContact={() => { console.log('onContact called!'); toggleWindow('contact'); focusWindow('contact'); }}
+              onViewProjects={() => { toggleWindow('projects'); focusWindow('projects'); }}
+              onContact={() => { toggleWindow('contact'); focusWindow('contact'); }}
+              onSkills={() => { toggleWindow('skills'); focusWindow('skills'); }}
             />
           </Window>
 

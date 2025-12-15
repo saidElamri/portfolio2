@@ -66,7 +66,10 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
                 className="relative overflow-hidden rounded-xl h-full"
                 style={{
                     backgroundColor: theme.surface,
-                    border: `1px solid ${isHovered ? accentColor + '50' : theme.border}`,
+                    border: `1px solid ${isHovered ? accentColor + '60' : theme.border}`, // Crisper border
+                    boxShadow: isHovered
+                        ? `0 12px 40px -12px ${accentColor}30, 0 0 0 1px ${accentColor}20`
+                        : '0 2px 10px rgba(0,0,0,0.02)' // Subtle depth normally
                 }}
                 whileHover={{ y: -2 }}
                 transition={{ duration: 0.2 }}
@@ -103,9 +106,11 @@ const ProjectCard = ({ project, index, featured = false, onOpenProject }) => {
                         <span
                             className="px-2.5 py-1 rounded-md text-xs font-medium backdrop-blur-sm"
                             style={{
-                                backgroundColor: `${accentColor}25`,
+                                backgroundColor: `${accentColor}20`, // Slightly clearer bg
                                 color: accentColor,
-                                border: `1px solid ${accentColor}30`
+                                border: `1px solid ${accentColor}20`,
+                                backdropFilter: 'blur(4px)',
+                                boxShadow: `0 2px 8px -2px ${accentColor}20`
                             }}
                         >
                             {project.category}

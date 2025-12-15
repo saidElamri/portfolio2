@@ -28,14 +28,14 @@ const MobileNav = ({ items }) => {
 
             {/* Navigation Bar / Drawer */}
             <motion.div
-                className={`md:hidden fixed bottom-0 left-0 right-0 bg-[#1c1c1e]/90 backdrop-blur-2xl border-t border-white/10 z-[1000] transition-all duration-300 ease-spring pointer-events-auto ${isExpanded ? 'rounded-t-3xl min-h-[60vh]' : 'pb-6 pt-2 px-4'}`}
+                className={`md:hidden fixed bottom-4 left-4 right-4 bg-[#1c1c1e]/95 backdrop-blur-2xl border border-white/10 z-[1000] transition-all duration-300 ease-spring pointer-events-auto flex flex-col ${isExpanded ? 'rounded-[32px] h-[85dvh] shadow-2xl' : 'rounded-[24px] pb-4 pt-2 px-4 shadow-lg'}`}
                 animate={{
-                    height: isExpanded ? 'auto' : 'auto', // Let content drive height
+                    height: isExpanded ? '85vh' : 'auto', // Explicit height for expanded state
                 }}
             >
-                {/* Drawer Handle (Visible only when expanded) */}
-                {isExpanded && (
-                    <div className="flex justify-center py-3" onClick={() => setIsExpanded(false)}>
+                {/* Drawer Handle (Visible only when COLLAPSED or dragging logic exists) */}
+                {!isExpanded && (
+                    <div className="flex justify-center py-3" onClick={() => setIsExpanded(true)}>
                         <div className="w-12 h-1.5 bg-white/20 rounded-full" />
                     </div>
                 )}
@@ -71,36 +71,41 @@ const MobileNav = ({ items }) => {
                     </div>
                 ) : (
                     /* Expanded View: Full Grid */
-                    <div className="px-6 pb-12 pt-2">
-                        <div className="flex items-center justify-between mb-6">
+                    /* Expanded View: Full Grid */
+                    <>
+                        {/* Fixed Header */}
+                        <div className="px-6 pt-6 pb-4 shrink-0 flex items-center justify-between border-b border-white/5 bg-[#1c1c1e]/95 backdrop-blur-xl z-20 rounded-t-[32px]">
                             <h3 className="text-white text-lg font-bold">App Library</h3>
                             <button
                                 onClick={() => setIsExpanded(false)}
-                                className="p-2 bg-white/10 rounded-full text-white/80"
+                                className="p-2 bg-white/10 rounded-full text-white/80 active:bg-white/20 transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
 
-                        <div className="grid grid-cols-4 gap-y-6 gap-x-4">
-                            {items.map((item) => (
-                                <motion.button
-                                    key={item.id}
-                                    onClick={() => {
-                                        item.onClick();
-                                        setIsExpanded(false);
-                                    }}
-                                    whileTap={{ scale: 0.9 }}
-                                    className="flex flex-col items-center gap-2"
-                                >
-                                    <div className="w-14 h-14 rounded-[18px] bg-white/5 flex items-center justify-center text-white backdrop-blur-sm border border-white/5 shadow-sm">
-                                        <item.icon className="w-7 h-7" />
-                                    </div>
-                                    <span className="text-[10px] text-white/80 font-medium text-center leading-tight">{item.label}</span>
-                                </motion.button>
-                            ))}
+                        {/* Scrollable Content */}
+                        <div className="px-6 pb-12 pt-4 flex-1 overflow-y-auto hide-scrollbar">
+                            <div className="grid grid-cols-4 gap-y-6 gap-x-4 pb-8">
+                                {items.map((item) => (
+                                    <motion.button
+                                        key={item.id}
+                                        onClick={() => {
+                                            item.onClick();
+                                            setIsExpanded(false);
+                                        }}
+                                        whileTap={{ scale: 0.9 }}
+                                        className="flex flex-col items-center gap-2"
+                                    >
+                                        <div className="w-14 h-14 rounded-[18px] bg-white/5 flex items-center justify-center text-white backdrop-blur-sm border border-white/5 shadow-sm">
+                                            <item.icon className="w-7 h-7" />
+                                        </div>
+                                        <span className="text-[10px] text-white/80 font-medium text-center leading-tight">{item.label}</span>
+                                    </motion.button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    </>
                 )}
             </motion.div>
         </>

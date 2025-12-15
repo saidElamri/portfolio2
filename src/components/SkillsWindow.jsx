@@ -5,47 +5,86 @@ import { Award, Calendar, ChevronRight, Briefcase, GraduationCap, Zap } from 'lu
 import useThemeStore, { themes } from '../stores/themeStore';
 import { skills, certificates, journey } from '../data/portfolio';
 
-// Skills Section
+// Skills Section - Capability Statements (New Format)
 const SkillsSection = () => {
     const { currentTheme } = useThemeStore();
     const theme = themes[currentTheme];
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-5">
             {skills.map((category, catIndex) => (
                 <motion.div
                     key={category.title}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: catIndex * 0.1 }}
-                    className="p-4 rounded-xl"
-                    style={{ backgroundColor: theme.background }}
+                    className="space-y-3"
                 >
-                    <div className="flex items-center gap-2 mb-2.5">
+                    {/* Category Header */}
+                    <div className="flex items-center gap-2">
                         <span className="text-base">{category.icon}</span>
                         <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: theme.text }}>
                             {category.title}
                         </span>
                     </div>
 
-                    <div className="space-y-3">
-                        {category.items.map((skill, skillIndex) => (
-                            <div key={skill.name} className="space-y-1">
-                                <div className="flex justify-between text-xs">
-                                    <span style={{ color: theme.textMuted }}>{skill.name}</span>
-                                    <span className="font-medium" style={{ color: theme.accent }}>{skill.level}%</span>
+                    {/* Capability Items */}
+                    <div className="space-y-3 pl-6">
+                        {category.capabilities ? (
+                            // New format: capability statements
+                            category.capabilities.map((cap, capIndex) => (
+                                <motion.div
+                                    key={cap.skill}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.1 + catIndex * 0.05 + capIndex * 0.03 }}
+                                    className="space-y-1.5"
+                                >
+                                    <div className="text-sm font-medium" style={{ color: theme.accent }}>
+                                        {cap.skill}
+                                    </div>
+                                    <p className="text-xs leading-relaxed" style={{ color: theme.textMuted }}>
+                                        {cap.statement}
+                                    </p>
+                                    {cap.projects && cap.projects.length > 0 && (
+                                        <div className="flex gap-1.5 flex-wrap mt-1">
+                                            {cap.projects.map(p => (
+                                                <span
+                                                    key={p}
+                                                    className="text-xs px-2 py-0.5 rounded"
+                                                    style={{
+                                                        backgroundColor: theme.background,
+                                                        border: `1px solid ${theme.border}`,
+                                                        color: theme.textMuted
+                                                    }}
+                                                >
+                                                    {p}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </motion.div>
+                            ))
+                        ) : (
+                            // Fallback: Legacy format with progress bars
+                            category.items?.map((skill, skillIndex) => (
+                                <div key={skill.name} className="space-y-1">
+                                    <div className="flex justify-between text-xs">
+                                        <span style={{ color: theme.textMuted }}>{skill.name}</span>
+                                        <span className="font-medium" style={{ color: theme.accent }}>{skill.level}%</span>
+                                    </div>
+                                    <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: theme.surface }}>
+                                        <motion.div
+                                            className="h-full rounded-full"
+                                            style={{ background: `linear-gradient(90deg, ${theme.accent}, ${theme.accentSecondary})` }}
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${skill.level}%` }}
+                                            transition={{ duration: 0.8, delay: 0.2 + catIndex * 0.1 + skillIndex * 0.05 }}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: theme.surface }}>
-                                    <motion.div
-                                        className="h-full rounded-full"
-                                        style={{ background: `linear-gradient(90deg, ${theme.accent}, ${theme.accentSecondary})` }}
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${skill.level}%` }}
-                                        transition={{ duration: 0.8, delay: 0.2 + catIndex * 0.1 + skillIndex * 0.05 }}
-                                    />
-                                </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </motion.div>
             ))}

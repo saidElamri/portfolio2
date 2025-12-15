@@ -133,8 +133,9 @@ const HeroScene = React.memo(() => {
                 camera={{ position: [0, 0, 8], fov: 50 }}
                 dpr={[1, 1]}
                 gl={{ antialias: true, alpha: true }}
+                style={{ background: 'transparent' }}
             >
-                <color attach="background" args={[theme.background]} />
+                {/* Removed solid background color to allow gradient to show through */}
                 <fog attach="fog" args={[theme.background, 8, 25]} />
                 <Scene />
             </Canvas>

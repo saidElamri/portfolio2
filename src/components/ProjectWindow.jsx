@@ -1,8 +1,49 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Github, ExternalLink, X, Calendar, Layers, Code, Globe, Star } from 'lucide-react';
+import { Github, ExternalLink, AlertCircle, GitBranch, Brain, Lightbulb, Layers, Target, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useThemeStore, { themes } from '../stores/themeStore';
+
+// Section component for consistent styling
+const Section = ({ title, icon: Icon, children, color }) => {
+    const { currentTheme } = useThemeStore();
+    const theme = themes[currentTheme];
+
+    return (
+        <div className="space-y-3">
+            <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: color || theme.text }}>
+                <Icon className="w-4 h-4" />
+                {title}
+            </h3>
+            <div className="text-sm leading-relaxed" style={{ color: theme.textMuted }}>
+                {children}
+            </div>
+        </div>
+    );
+};
+
+// Stack breakdown component
+const StackBreakdown = ({ frontend, backend, database }) => {
+    const { currentTheme } = useThemeStore();
+    const theme = themes[currentTheme];
+
+    const items = [
+        { label: 'Frontend', value: frontend },
+        { label: 'Backend', value: backend },
+        { label: 'Database', value: database },
+    ].filter(item => item.value);
+
+    return (
+        <div className="space-y-2">
+            {items.map(item => (
+                <div key={item.label} className="flex gap-3 text-xs">
+                    <span className="font-medium w-16 shrink-0" style={{ color: theme.accent }}>{item.label}</span>
+                    <span style={{ color: theme.textMuted }}>{item.value}</span>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 const ProjectWindow = ({ project, onClose }) => {
     const { t } = useTranslation();
@@ -61,89 +102,118 @@ const ProjectWindow = ({ project, onClose }) => {
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
 
-                {/* Hero Image */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="relative w-full h-64 rounded-2xl overflow-hidden border shadow-2xl group"
-                    style={{ borderColor: theme.border }}
-                >
-                    {project.image ? (
-                        <img
-                            src={project.image}
-                            alt={project.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                {/* 1. Problem Statement - Lead with what was solved */}
+                {project.problem && (
+                    <Section title="The Problem" icon={AlertCircle} color="#f97316">
+                        <p>{project.problem}</p>
+                    </Section>
+                )}
+
+                {/* 2. Architecture Overview */}
+                {project.architecture && (
+                    <Section title="Architecture" icon={GitBranch} color="#3b82f6">
+                        <p className="mb-4">{project.architecture.overview}</p>
+                        <StackBreakdown
+                            frontend={project.architecture.frontend}
+                            backend={project.architecture.backend}
+                            database={project.architecture.database}
                         />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-white/5">
-                            <span className="text-4xl">{project.icon}</span>
-                        </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                </motion.div>
+                    </Section>
+                )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Main Content */}
-                    <div className="md:col-span-2 space-y-6">
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                                <Star className="w-4 h-4 text-yellow-400" />
-                                {t('windows.about')}
-                            </h3>
-                            <p className="text-sm leading-relaxed text-white/80">
-                                {project.longDesc || project.desc}
-                            </p>
-                        </div>
-
-                        <div>
-                            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                                <Layers className="w-4 h-4 text-blue-400" />
-                                {t('hero.techStack')}
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {project.tech.map((tech) => (
-                                    <span
-                                        key={tech}
-                                        className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
-                                        style={{
-                                            backgroundColor: 'rgba(255,255,255,0.03)',
-                                            borderColor: theme.border,
-                                            color: theme.text
-                                        }}
-                                    >
-                                        {tech}
-                                    </span>
-                                ))}
+                {/* 3. AI Details - For AI/ML projects */}
+                {project.aiDetails && (
+                    <div
+                        className="p-4 rounded-xl space-y-3"
+                        style={{ backgroundColor: `${theme.accentSecondary}10`, border: `1px solid ${theme.accentSecondary}20` }}
+                    >
+                        <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: theme.accentSecondary }}>
+                            <Brain className="w-4 h-4" />
+                            AI Implementation
+                        </h3>
+                        <div className="space-y-3 text-xs">
+                            <div>
+                                <span className="font-medium" style={{ color: theme.text }}>Model: </span>
+                                <span style={{ color: theme.textMuted }}>{project.aiDetails.model}</span>
                             </div>
+                            <div>
+                                <span className="font-medium" style={{ color: theme.text }}>Data Flow: </span>
+                                <span style={{ color: theme.textMuted }}>{project.aiDetails.dataFlow}</span>
+                            </div>
+                            <div>
+                                <span className="font-medium" style={{ color: theme.text }}>Why AI? </span>
+                                <span style={{ color: theme.textMuted }}>{project.aiDetails.whyAI}</span>
+                            </div>
+                            {project.aiDetails.integration && (
+                                <div>
+                                    <span className="font-medium" style={{ color: theme.text }}>Integration: </span>
+                                    <span style={{ color: theme.textMuted }}>{project.aiDetails.integration}</span>
+                                </div>
+                            )}
                         </div>
                     </div>
+                )}
 
-                    {/* Sidebar Details */}
-                    <div className="space-y-6">
-                        <div className="p-4 rounded-xl border bg-white/5 backdrop-blur-sm" style={{ borderColor: theme.border }}>
-                            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-4">Project Info</h4>
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3 text-sm">
-                                    <Globe className="w-4 h-4 text-white/60" />
-                                    <span className="text-white/80">{project.category}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm">
-                                    <Calendar className="w-4 h-4 text-white/60" />
-                                    <span className="text-white/80">2024</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm">
-                                    <Code className="w-4 h-4 text-white/60" />
-                                    <span className="text-white/80">v1.0.0</span>
-                                </div>
-                            </div>
-                        </div>
+                {/* 4. Key Technical Decisions */}
+                {project.technicalDecisions && project.technicalDecisions.length > 0 && (
+                    <Section title="Key Technical Decisions" icon={Lightbulb} color="#eab308">
+                        <ul className="space-y-2">
+                            {project.technicalDecisions.map((decision, i) => (
+                                <li key={i} className="flex gap-2 text-xs">
+                                    <ArrowRight className="w-3 h-3 shrink-0 mt-0.5" style={{ color: theme.accent }} />
+                                    <span>{decision}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </Section>
+                )}
+
+                {/* 5. Tech Stack */}
+                <Section title="Tech Stack" icon={Layers}>
+                    <div className="flex flex-wrap gap-2">
+                        {project.tech.map((tech) => (
+                            <span
+                                key={tech}
+                                className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+                                style={{
+                                    backgroundColor: 'rgba(255,255,255,0.03)',
+                                    borderColor: theme.border,
+                                    color: theme.text
+                                }}
+                            >
+                                {tech}
+                            </span>
+                        ))}
                     </div>
-                </div>
+                </Section>
+
+                {/* 6. Outcome / Results */}
+                {project.outcome && (
+                    <div
+                        className="p-4 rounded-xl"
+                        style={{ backgroundColor: '#7ee78710', border: '1px solid #7ee78720' }}
+                    >
+                        <div className="flex items-center gap-2 mb-2">
+                            <Target className="w-4 h-4" style={{ color: '#7ee787' }} />
+                            <span className="text-sm font-semibold" style={{ color: '#7ee787' }}>Outcome</span>
+                        </div>
+                        <p className="text-xs" style={{ color: theme.textMuted }}>{project.outcome}</p>
+                    </div>
+                )}
+
+                {/* Fallback: Long description if no structured data */}
+                {!project.problem && !project.architecture && (
+                    <Section title="About" icon={AlertCircle}>
+                        <p>{project.longDesc || project.desc}</p>
+                    </Section>
+                )}
+
             </div>
         </div>
     );
 };
 
 export default ProjectWindow;
+

@@ -58,9 +58,6 @@ const useVoiceCommands = (toggleWindow, windows, setTheme) => {
             if (cmd.includes('cyber') || cmd.includes('cyberpunk')) setTheme('cyberpunk');
             if (cmd.includes('custom')) setTheme('custom');
         }
-
-        // Music Commands (Basic simulation)
-        // Ideally we'd need access to the music player ref or state
     };
 
     const toggleListening = useCallback(() => {

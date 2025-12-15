@@ -54,19 +54,53 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
             ai: '🤖',
             github: '🐙',
             skills: '💼',
-            music: '🎵',
         };
         return icons[id] || '📄';
     };
 
+    // Motion Variants - Platform Specific
+    const mobileVariants = {
+        initial: { opacity: 0, scale: 0.9, y: '20px' },
+        animate: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: { type: 'spring', stiffness: 350, damping: 30, mass: 0.8 }
+        },
+        exit: {
+            opacity: 0,
+            scale: 0.95,
+            y: '20px',
+            transition: { duration: 0.2 }
+        }
+    };
+
+    const desktopVariants = {
+        initial: { opacity: 0, scale: 0.96 },
+        animate: {
+            opacity: 1,
+            scale: 1,
+            transition: { type: 'spring', stiffness: 400, damping: 30 }
+        },
+        exit: {
+            opacity: 0,
+            scale: 0.98,
+            transition: { duration: 0.15 }
+        }
+    };
+
+    // Current variants based on platform
+    const variants = isMobile ? mobileVariants : desktopVariants;
+
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{
-                opacity: 1,
-                scale: 1,
-                y: 0,
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            style={{
+                zIndex,
                 // Force full screen on mobile or if maximized
                 ...((isMaximized || isMobile) ? {
                     width: '100vw',
@@ -76,14 +110,11 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                     x: 0,
                     y: 0,
                     borderRadius: 0,
-                } : {})
-            }}
-            exit={{ opacity: 0, scale: 0.98, y: 10 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-            style={{
-                zIndex,
-                // Defensive check to prevent ReferenceError during hot reload
-                ...(!(isMaximized || isMobile) && typeof position !== 'undefined' ? position : {})
+                    transform: 'none' // Important to prevent conflicts
+                } : {
+                    // Defensive check to prevent ReferenceError during hot reload
+                    ...(typeof position !== 'undefined' ? position : {})
+                })
             }}
             className={`
                 absolute flex flex-col
@@ -136,11 +167,12 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                     ${!isMaximized ? 'rounded-2xl' : ''}
                 `}
                 style={{
-                    backgroundColor: `${theme.surface}e8`,
-                    boxShadow: isHovered
+                    backgroundColor: isMobile ? '#121212f0' : `${theme.surface}e8`, // Solid mostly opaque dark bg on mobile for perf
+                    boxShadow: (isHovered && !isMobile) // No expensive shadows on mobile
                         ? `0 25px 60px -12px ${theme.accent}25, 0 12px 30px -8px rgba(0,0,0,0.4)`
-                        : `0 20px 50px -15px rgba(0,0,0,0.5), 0 8px 24px -8px rgba(0,0,0,0.3)`,
+                        : (!isMobile ? `0 20px 50px -15px rgba(0,0,0,0.5), 0 8px 24px -8px rgba(0,0,0,0.3)` : 'none'),
                     border: `1px solid ${isHovered ? theme.accent + '30' : theme.border}`,
+                    backdropFilter: isMobile ? 'none' : 'blur(16px) saturate(1.25)', // Explicitly remove expensive blur on mobile
                 }}
             >
                 {/* Subtle noise texture */}
@@ -168,9 +200,10 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                             </div>
                             <button
                                 onClick={onClose}
-                                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center active:bg-white/20 transition-colors"
+                                className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center active:bg-white/20 transition-colors touch-manipulation"
+                                aria-label="Close"
                             >
-                                <ChevronDown className="w-5 h-5 text-white" />
+                                <ChevronDown className="w-6 h-6 text-white" />
                             </button>
                         </div>
                     </div>

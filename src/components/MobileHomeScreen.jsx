@@ -45,7 +45,6 @@ const MobileHomeScreen = ({
     }));
 
     const handleAppClick = (app) => {
-        console.log('[DEBUG] Mobile app clicked:', app.id);
         app.onClick();
     };
 
@@ -94,18 +93,19 @@ const MobileHomeScreen = ({
                                 {/* App Icon */}
                                 <div
                                     className={`w-14 h-14 rounded-[16px] bg-gradient-to-br ${app.gradient} 
-                                        flex items-center justify-center shadow-lg
+                                        flex items-center justify-center
                                         active:brightness-90 transition-all`}
                                     style={{
-                                        boxShadow: `0 4px 12px rgba(0,0,0,0.3), 
-                                                    inset 0 1px 0 rgba(255,255,255,0.2)`
+                                        // No box-shadow on mobile for performance
+                                        border: '1px solid rgba(255,255,255,0.1)'
                                     }}
                                 >
                                     <Icon className="w-7 h-7 text-white drop-shadow-sm" />
                                 </div>
 
                                 {/* App Label */}
-                                <span className="text-xs text-white/90 font-medium text-center leading-tight max-w-16 truncate">
+                                {/* App Label - Allow wrapping */}
+                                <span className="text-xs text-white/90 font-medium text-center leading-tight max-w-20">
                                     {app.label}
                                 </span>
                             </motion.button>
