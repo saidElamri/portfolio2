@@ -88,26 +88,33 @@ const NotesWindow = () => {
                             className="flex-1 flex flex-col"
                         >
                             {/* Search Header */}
-                            <div className="p-4 sticky top-0 z-10" style={{ backgroundColor: theme.surface }}>
+                            <div className="px-4 py-3 sticky top-0 z-10" style={{ backgroundColor: theme.surface }}>
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: theme.textMuted }} />
+                                    <Search
+                                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                                        style={{ color: theme.textMuted, left: '16px' }}
+                                    />
                                     <input
                                         type="text"
                                         placeholder="Search notes..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-colors"
+                                        className="w-full rounded-xl text-sm outline-none transition-colors"
                                         style={{
                                             backgroundColor: theme.background,
                                             color: theme.text,
-                                            border: `1px solid ${theme.border}`
+                                            border: `1px solid ${theme.border}`,
+                                            paddingLeft: '48px',
+                                            paddingRight: '16px',
+                                            paddingTop: '12px',
+                                            paddingBottom: '12px'
                                         }}
                                     />
                                 </div>
                             </div>
 
                             {/* Notes List */}
-                            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
                                 {filteredNotes.map((note, index) => (
                                     <motion.button
                                         key={note.id}
@@ -115,24 +122,24 @@ const NotesWindow = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
                                         onClick={() => setSelectedNote(note)}
-                                        className="w-full text-left p-4 rounded-2xl transition-all active:scale-[0.98]"
+                                        className="w-full text-left p-5 rounded-2xl transition-all active:scale-[0.98]"
                                         style={{
                                             backgroundColor: theme.surface,
                                             border: `1px solid ${theme.border}`
                                         }}
                                     >
-                                        <h3 className="font-semibold mb-1 line-clamp-1" style={{ color: theme.text }}>
+                                        <h3 className="font-semibold mb-2 line-clamp-1" style={{ color: theme.text }}>
                                             {note.title}
                                         </h3>
-                                        <p className="text-xs mb-2 line-clamp-2" style={{ color: theme.textMuted }}>
+                                        <p className="text-sm mb-3 line-clamp-2 leading-relaxed" style={{ color: theme.textMuted }}>
                                             {note.preview}
                                         </p>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 flex-wrap">
                                             <span className="text-xs" style={{ color: theme.textMuted }}>{note.date}</span>
                                             {note.tags.map(tag => (
                                                 <span
                                                     key={tag}
-                                                    className="text-xs px-2 py-0.5 rounded-full"
+                                                    className="text-xs px-2 py-1 rounded-full"
                                                     style={{ backgroundColor: theme.accent + '20', color: theme.accent }}
                                                 >
                                                     {tag}
@@ -212,17 +219,24 @@ const NotesWindow = () => {
                 {/* Search */}
                 <div className="p-4">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: theme.textMuted }} />
+                        <Search
+                            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                            style={{ color: theme.textMuted, left: '12px' }}
+                        />
                         <input
                             type="text"
                             placeholder="Search notes..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full rounded-lg pl-9 pr-3 py-2 text-sm outline-none transition-colors"
+                            className="w-full rounded-lg text-sm outline-none transition-colors"
                             style={{
                                 backgroundColor: theme.background,
                                 color: theme.text,
-                                border: `1px solid ${theme.border}`
+                                border: `1px solid ${theme.border}`,
+                                paddingLeft: '40px',
+                                paddingRight: '12px',
+                                paddingTop: '8px',
+                                paddingBottom: '8px'
                             }}
                         />
                     </div>
