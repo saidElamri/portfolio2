@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Calendar, Tag, Search, ChevronLeft, Plus } from 'lucide-react';
+import { Calendar, Search, ChevronLeft } from 'lucide-react';
 import useThemeStore, { themes } from '../stores/themeStore';
 
 // Sample Blog Data
@@ -73,131 +73,105 @@ const NotesWindow = () => {
         note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    // Mobile: Show list or detail view
+    // Mobile View
     if (isMobile) {
         return (
-            <div className="h-full flex flex-col" style={{ backgroundColor: theme.background }}>
+            <div className="h-full flex flex-col p-6" style={{ backgroundColor: theme.background }}>
                 <AnimatePresence mode="wait">
                     {!selectedNote ? (
-                        // Notes List View
                         <motion.div
                             key="list"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            exit={{ opacity: 0, x: -20 }}
+                            exit={{ opacity: 0 }}
                             className="flex-1 flex flex-col"
                         >
-                            {/* Search Header */}
-                            <div className="px-4 py-3 sticky top-0 z-10" style={{ backgroundColor: theme.surface }}>
-                                <div className="relative">
-                                    <Search
-                                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                                        style={{ color: theme.textMuted, left: '16px' }}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Search notes..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full rounded-xl text-sm outline-none transition-colors"
-                                        style={{
-                                            backgroundColor: theme.background,
-                                            color: theme.text,
-                                            border: `1px solid ${theme.border}`,
-                                            paddingLeft: '48px',
-                                            paddingRight: '16px',
-                                            paddingTop: '12px',
-                                            paddingBottom: '12px'
-                                        }}
-                                    />
-                                </div>
+                            {/* Search */}
+                            <div className="relative mb-4">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: theme.textMuted }} />
+                                <input
+                                    type="text"
+                                    placeholder="Search notes..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full py-2.5 rounded-lg text-sm outline-none"
+                                    style={{
+                                        backgroundColor: theme.surface,
+                                        color: theme.text,
+                                        border: `1px solid ${theme.border}`,
+                                        paddingLeft: '40px',
+                                        paddingRight: '16px',
+                                    }}
+                                />
                             </div>
 
                             {/* Notes List */}
-                            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
-                                {filteredNotes.map((note, index) => (
-                                    <motion.button
+                            <div className="flex-1 overflow-y-auto space-y-2">
+                                {filteredNotes.map((note) => (
+                                    <button
                                         key={note.id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.05 }}
                                         onClick={() => setSelectedNote(note)}
-                                        className="w-full text-left p-5 rounded-2xl transition-all active:scale-[0.98]"
+                                        className="w-full text-left p-4 rounded-xl"
                                         style={{
                                             backgroundColor: theme.surface,
-                                            border: `1px solid ${theme.border}`
+                                            border: `1px solid ${theme.border}`,
                                         }}
                                     >
-                                        <h3 className="font-semibold mb-2 line-clamp-1" style={{ color: theme.text }}>
+                                        <h3 className="font-semibold text-sm mb-1" style={{ color: theme.text }}>
                                             {note.title}
                                         </h3>
-                                        <p className="text-sm mb-3 line-clamp-2 leading-relaxed" style={{ color: theme.textMuted }}>
+                                        <p className="text-xs mb-2 line-clamp-2" style={{ color: theme.textMuted }}>
                                             {note.preview}
                                         </p>
-                                        <div className="flex items-center gap-2 flex-wrap">
+                                        <div className="flex items-center gap-2">
                                             <span className="text-xs" style={{ color: theme.textMuted }}>{note.date}</span>
                                             {note.tags.map(tag => (
                                                 <span
                                                     key={tag}
-                                                    className="text-xs px-2 py-1 rounded-full"
-                                                    style={{ backgroundColor: theme.accent + '20', color: theme.accent }}
+                                                    className="text-xs px-2 py-0.5 rounded"
+                                                    style={{ backgroundColor: theme.background, color: theme.accent }}
                                                 >
                                                     {tag}
                                                 </span>
                                             ))}
                                         </div>
-                                    </motion.button>
+                                    </button>
                                 ))}
                             </div>
                         </motion.div>
                     ) : (
-                        // Note Detail View
                         <motion.div
                             key="detail"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="flex-1 flex flex-col"
                         >
-                            {/* Back Header */}
-                            <div
-                                className="p-4 flex items-center gap-3 sticky top-0 z-10"
-                                style={{ backgroundColor: theme.surface, borderBottom: `1px solid ${theme.border}` }}
+                            {/* Back Button */}
+                            <button
+                                onClick={() => setSelectedNote(null)}
+                                className="flex items-center gap-1 text-sm mb-4"
+                                style={{ color: theme.accent }}
                             >
-                                <button
-                                    onClick={() => setSelectedNote(null)}
-                                    className="flex items-center gap-1 text-sm transition-colors"
-                                    style={{ color: theme.accent }}
-                                >
-                                    <ChevronLeft className="w-5 h-5" />
-                                    Notes
-                                </button>
-                            </div>
+                                <ChevronLeft className="w-4 h-4" />
+                                Back
+                            </button>
 
                             {/* Note Content */}
-                            <div className="flex-1 overflow-y-auto p-5">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <Calendar className="w-4 h-4" style={{ color: theme.textMuted }} />
-                                    <span className="text-xs" style={{ color: theme.textMuted }}>{selectedNote.date}</span>
+                            <div className="flex-1 overflow-y-auto">
+                                <div className="flex items-center gap-2 text-xs mb-3" style={{ color: theme.textMuted }}>
+                                    <Calendar className="w-3 h-3" />
+                                    <span>{selectedNote.date}</span>
                                     {selectedNote.tags.map(tag => (
-                                        <span
-                                            key={tag}
-                                            className="text-xs px-2 py-0.5 rounded-full"
-                                            style={{ backgroundColor: theme.accent + '20', color: theme.accent }}
-                                        >
+                                        <span key={tag} className="px-2 py-0.5 rounded" style={{ backgroundColor: theme.surface, color: theme.accent }}>
                                             {tag}
                                         </span>
                                     ))}
                                 </div>
-
-                                <h1 className="text-xl font-bold mb-4" style={{ color: theme.text }}>
+                                <h1 className="text-lg font-bold mb-4" style={{ color: theme.text }}>
                                     {selectedNote.title}
                                 </h1>
-
-                                <div
-                                    className="text-sm leading-relaxed whitespace-pre-wrap"
-                                    style={{ color: theme.textMuted }}
-                                >
+                                <div className="text-sm leading-relaxed whitespace-pre-line" style={{ color: theme.textMuted }}>
                                     {selectedNote.content}
                                 </div>
                             </div>
@@ -208,113 +182,81 @@ const NotesWindow = () => {
         );
     }
 
-    // Desktop: Side-by-side view
+    // Desktop View - Split panel
     return (
-        <div className="flex h-full" style={{ backgroundColor: theme.background }}>
-            {/* Sidebar */}
+        <div className="h-full flex" style={{ backgroundColor: theme.background }}>
+            {/* Sidebar - Notes List */}
             <div
-                className="w-72 flex flex-col border-r shrink-0"
-                style={{ borderColor: theme.border, backgroundColor: theme.surface }}
+                className="w-72 flex flex-col p-4"
+                style={{ borderRight: `1px solid ${theme.border}`, paddingLeft: '16px' }}
             >
                 {/* Search */}
-                <div className="p-4">
-                    <div className="relative">
-                        <Search
-                            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                            style={{ color: theme.textMuted, left: '12px' }}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Search notes..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full rounded-lg text-sm outline-none transition-colors"
-                            style={{
-                                backgroundColor: theme.background,
-                                color: theme.text,
-                                border: `1px solid ${theme.border}`,
-                                paddingLeft: '40px',
-                                paddingRight: '12px',
-                                paddingTop: '8px',
-                                paddingBottom: '8px'
-                            }}
-                        />
-                    </div>
+                <div className="relative mb-4">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: theme.textMuted }} />
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full py-2 rounded-lg text-sm outline-none"
+                        style={{
+                            backgroundColor: theme.surface,
+                            color: theme.text,
+                            border: `1px solid ${theme.border}`,
+                            paddingLeft: '40px',
+                            paddingRight: '16px',
+                        }}
+                    />
                 </div>
 
                 {/* Notes List */}
-                <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
-                    {filteredNotes.map(note => (
+                <div className="flex-1 overflow-y-auto space-y-1">
+                    {filteredNotes.map((note) => (
                         <button
                             key={note.id}
                             onClick={() => setSelectedNote(note)}
-                            className={`w-full text-left p-3 rounded-lg transition-all`}
+                            className="w-full text-left p-3 rounded-lg transition-colors"
                             style={{
-                                backgroundColor: selectedNote?.id === note.id ? theme.accent + '20' : 'transparent',
+                                backgroundColor: selectedNote?.id === note.id ? theme.surface : 'transparent',
+                                borderLeft: selectedNote?.id === note.id ? `2px solid ${theme.accent}` : '2px solid transparent',
                             }}
                         >
-                            <h3
-                                className="text-sm font-semibold mb-1 line-clamp-1"
-                                style={{ color: selectedNote?.id === note.id ? theme.accent : theme.text }}
-                            >
+                            <h3 className="font-medium text-sm truncate" style={{ color: theme.text }}>
                                 {note.title}
                             </h3>
-                            <div className="flex items-center gap-2 text-xs" style={{ color: theme.textMuted }}>
-                                <span>{note.date}</span>
-                                {note.tags[0] && (
-                                    <span
-                                        className="px-1.5 py-0.5 rounded"
-                                        style={{ backgroundColor: theme.background }}
-                                    >
-                                        {note.tags[0]}
-                                    </span>
-                                )}
-                            </div>
+                            <p className="text-xs truncate" style={{ color: theme.textMuted }}>
+                                {note.preview}
+                            </p>
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            {/* Content Area */}
+            <div className="flex-1 flex flex-col p-6 overflow-y-auto">
                 {selectedNote ? (
-                    <motion.div
-                        key={selectedNote.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="max-w-2xl mx-auto"
-                    >
-                        <div className="flex items-center gap-3 mb-4" style={{ color: theme.textMuted }}>
-                            <Calendar className="w-4 h-4" />
-                            <span className="text-sm">{selectedNote.date}</span>
+                    <>
+                        <div className="flex items-center gap-2 text-xs mb-4" style={{ color: theme.textMuted }}>
+                            <Calendar className="w-3 h-3" />
+                            <span>{selectedNote.date}</span>
                             {selectedNote.tags.map(tag => (
-                                <span
-                                    key={tag}
-                                    className="text-xs px-2 py-1 rounded-full"
-                                    style={{ backgroundColor: theme.accent + '20', color: theme.accent }}
-                                >
+                                <span key={tag} className="px-2 py-0.5 rounded" style={{ backgroundColor: theme.surface, color: theme.accent }}>
                                     {tag}
                                 </span>
                             ))}
                         </div>
-
-                        <h1 className="text-2xl font-bold mb-6" style={{ color: theme.text }}>
+                        <h1 className="text-xl font-bold mb-4" style={{ color: theme.text }}>
                             {selectedNote.title}
                         </h1>
-
-                        <div
-                            className="leading-relaxed whitespace-pre-wrap"
-                            style={{ color: theme.textMuted }}
-                        >
+                        <div className="text-sm leading-relaxed whitespace-pre-line" style={{ color: theme.textMuted }}>
                             {selectedNote.content}
                         </div>
-                    </motion.div>
+                    </>
                 ) : (
-                    <div className="h-full flex items-center justify-center" style={{ color: theme.textMuted }}>
-                        <div className="text-center">
-                            <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                            <p>Select a note to read</p>
-                        </div>
+                    <div className="flex-1 flex items-center justify-center">
+                        <p className="text-sm" style={{ color: theme.textMuted }}>
+                            Select a note to read
+                        </p>
                     </div>
                 )}
             </div>

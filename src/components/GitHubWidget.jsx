@@ -252,7 +252,7 @@ const GitHubWidget = () => {
     const totalForks = repos.reduce((acc, repo) => acc + (repo.forks_count || 0), 0);
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8" style={{ paddingLeft: '16px' }}>
             {/* Profile Header */}
             <div className="flex items-center gap-4">
                 <motion.div

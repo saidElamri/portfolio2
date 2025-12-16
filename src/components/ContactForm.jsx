@@ -34,7 +34,7 @@ const ContactForm = () => {
     };
 
     return (
-        <div>
+        <div style={{ paddingLeft: '16px' }}>
             {/* Header */}
             <h2 className="text-xl font-bold text-white">{t('contact.title')}</h2>
 

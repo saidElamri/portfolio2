@@ -79,7 +79,7 @@ const AiAssistant = () => {
     };
 
     return (
-        <div className="flex flex-col h-full min-h-[350px]">
+        <div className="flex flex-col h-full min-h-[350px]" style={{ paddingLeft: '16px' }}>
             {/* Header */}
             <div className="flex items-center gap-3 pb-4 border-b border-white/10">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg">

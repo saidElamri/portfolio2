@@ -421,7 +421,7 @@ const InteractiveTerminal = ({ onHackerMode }) => {
     };
 
     return (
-        <div className="font-mono text-sm h-full flex flex-col" onClick={() => document.getElementById('term-input')?.focus()}>
+        <div className="font-mono text-sm h-full flex flex-col" style={{ paddingLeft: '16px' }} onClick={() => document.getElementById('term-input')?.focus()}>
             <div className="flex-1 overflow-y-auto">
                 {history.map((line, i) => (
                     <div

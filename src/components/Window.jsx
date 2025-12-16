@@ -186,9 +186,8 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                 <div
                     ref={contentRef}
                     className={`
-                        flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col min-h-0
+                        flex-1 overflow-y-auto overflow-x-hidden flex flex-col min-h-0
                         ${!isMaximized && !isMobile ? 'min-h-[320px] max-h-[60vh]' : ''}
-                        ${isMobile ? 'rounded-t-3xl' : 'rounded-b-xl'}
                     `}
                     style={{ color: theme.text }}
                 >
