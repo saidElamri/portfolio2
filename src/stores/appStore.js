@@ -43,9 +43,13 @@ const useAppStore = create(
             // State
             openApps: [], // Array of { id, zIndex }
             activeApp: null,
+            isMobile: false,
             zCounter: Z_WINDOW_BASE,
             windowPositions: DEFAULT_POSITIONS, // Persisted positions
             
+            // Actions
+            setIsMobile: (isMobile) => set({ isMobile }),
+
             // Computed: Check if an app is open
             isAppOpen: (id) => get().openApps.some(app => app.id === id),
             
@@ -76,9 +80,15 @@ const useAppStore = create(
                 if (existingIndex !== -1) {
                     // App is already open, bring to front
                     const newCounter = state.zCounter + 1;
-                    const newOpenApps = state.openApps.map(app => 
+                    let newOpenApps = state.openApps.map(app =>
                         app.id === id ? { ...app, zIndex: newCounter } : app
                     );
+
+                    // On mobile, ensure only one app is open (or at least looks like it)
+                    if (state.isMobile) {
+                        newOpenApps = [{ id, zIndex: newCounter }];
+                    }
+
                     return {
                         openApps: newOpenApps,
                         activeApp: id,
@@ -88,8 +98,14 @@ const useAppStore = create(
                 
                 // App is not open, add it
                 const newCounter = state.zCounter + 1;
+                let newOpenApps = [...state.openApps, { id, zIndex: newCounter }];
+
+                if (state.isMobile) {
+                    newOpenApps = [{ id, zIndex: newCounter }];
+                }
+
                 return {
-                    openApps: [...state.openApps, { id, zIndex: newCounter }],
+                    openApps: newOpenApps,
                     activeApp: id,
                     zCounter: newCounter
                 };

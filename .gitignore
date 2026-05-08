@@ -25,3 +25,6 @@ dist-ssr
 
 # AI Agent workflows
 .agent/
+
+# Test artifacts
+test-results/

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import useThemeStore from '../stores/themeStore';
 
-const useVoiceCommands = (toggleWindow, windows, setTheme) => {
+const useVoiceCommands = (toggleWindow, setTheme) => {
     const [isListening, setIsListening] = useState(false);
     const [transcript, setTranscript] = useState('');
     const [recognition, setRecognition] = useState(null);
@@ -25,7 +25,7 @@ const useVoiceCommands = (toggleWindow, windows, setTheme) => {
 
             setRecognition(newRecognition);
         }
-    }, [toggleWindow, setTheme]); // Removed 'windows' dependency
+    }, [toggleWindow, setTheme]);
 
     const processCommand = (cmd) => {
         // Window Commands

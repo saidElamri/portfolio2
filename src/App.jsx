@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import AiAssistant from './components/AiAssistant';
-import { Terminal, FolderOpen, Mail, User, Github, Linkedin, Code, Monitor, Bot, Briefcase, Download, Copy, Check, FileText, ShoppingBag, Calculator, Gamepad2, Settings, Mic, MicOff } from 'lucide-react';
+import { Terminal, FolderOpen, Mail, User, Github, Code, Monitor, Bot, Briefcase, Download, Settings, Mic, MicOff, Linkedin, FileText, ShoppingBag, Calculator, Gamepad2 } from 'lucide-react';
 import Dock from './components/Dock';
 import Window from './components/Window';
 import Grain from './components/Grain';
@@ -16,39 +16,31 @@ import ContextMenu from './components/ContextMenu';
 import BentoGrid from './components/BentoGrid';
 import ThemePicker from './components/ThemePicker';
 import GitHubWidget from './components/GitHubWidget';
-import SkillsSection from './components/SkillsSection';
-import ExperienceTimeline from './components/ExperienceTimeline';
+import SkillsWindow from './components/SkillsWindow';
 import ContactForm from './components/ContactForm';
 import HeroProfile from './components/HeroProfile';
-import { PreloaderProvider, useImagePreloader } from './context/PreloaderContext';
-import { Spotlight, ClickRipple, useKonamiCode, Achievement, getGreeting, LiveIndicator, TypeWriter } from './components/Effects';
+import { PreloaderProvider } from './context/PreloaderContext';
+import { Achievement, useKonamiCode } from './components/Effects';
 import SEOManager from './components/SEOManager';
 import { projects } from './data/portfolio';
 import useThemeStore from './stores/themeStore';
+import useAppStore from './stores/appStore';
 // Hooks
 import useVoiceCommands from './hooks/useVoiceCommands';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import MobileNav from './components/MobileNav';
 import MobileStatusBar from './components/MobileStatusBar';
 import MobileHomeScreen from './components/MobileHomeScreen';
-import CalculatorApp from './components/apps/Calculator'; // Keep small apps eager if needed or lazy them too
+import CalculatorApp from './components/apps/Calculator';
 import TicTacToeApp from './components/apps/TicTacToe';
 import { availableApps } from './data/apps';
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 
 // Lazy load heavy window components
-const SkillsWindow = lazy(() => import('./components/SkillsWindow'));
 const ProjectWindow = lazy(() => import('./components/ProjectWindow'));
 const NotesWindow = lazy(() => import('./components/NotesWindow'));
 const AppStoreWindow = lazy(() => import('./components/AppStoreWindow'));
 const SettingsWindow = lazy(() => import('./components/SettingsWindow'));
-
-// Loading fallback
-const WindowLoader = () => (
-  <div className="flex items-center justify-center h-full text-white/40">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-  </div>
-);
 
 const PortfolioContent = () => {
   const { t } = useTranslation();
@@ -59,16 +51,27 @@ const PortfolioContent = () => {
   const [achievementData, setAchievementData] = useState({ title: '', description: '' });
   const [selectedProject, setSelectedProject] = useState(null);
 
-  // Mobile detection - initialize correctly from start
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' && window.innerWidth < 768
-  );
+  // Use Central App Store
+  const {
+    openApps,
+    activeApp,
+    openApp,
+    closeApp,
+    toggleApp,
+    bringToFront,
+    isAppOpen,
+    getAppZIndex,
+    isMobile,
+    setIsMobile
+  } = useAppStore();
 
+  // Mobile detection - initialize correctly from start
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Initialize
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [setIsMobile]);
 
   // Enable keyboard shortcuts (Cmd+W, Cmd+Q, Escape)
   useKeyboardShortcuts();
@@ -93,121 +96,33 @@ const PortfolioContent = () => {
     localStorage.setItem('saidos-desktop-icons', JSON.stringify(iconPositions));
   }, [iconPositions]);
 
-  // Windows state - on mobile, start with no windows open
-  const [windows, setWindows] = useState(() => {
-    const isMobileInit = typeof window !== 'undefined' && window.innerWidth < 768;
-    // Using CSS variable values: --z-window = 40, --z-window-active = 50
-    return {
-      about: { isOpen: !isMobileInit, zIndex: 50 },
-      projects: { isOpen: false, zIndex: 40 },
-      projectDetails: { isOpen: false, zIndex: 40 },
-      terminal: { isOpen: false, zIndex: 40 },
-      contact: { isOpen: false, zIndex: 40 },
-      ai: { isOpen: false, zIndex: 40 },
-      github: { isOpen: false, zIndex: 40 },
-      skills: { isOpen: false, zIndex: 40 },
-      notes: { isOpen: false, zIndex: 40 },
-      store: { isOpen: false, zIndex: 40 },
-      calculator: { isOpen: false, zIndex: 40 },
-      tictactoe: { isOpen: false, zIndex: 40 },
-      settings: { isOpen: false, zIndex: 40 }
-    };
-  });
-
-  // Incremental z-index counter to ensure new windows always on top
-  const zCounter = useRef(50);
-
-  // Close all windows when switching to mobile view
+  // Initial app open
   useEffect(() => {
-    if (isMobile) {
-      setWindows(prev => {
-        const newWindows = { ...prev };
-        Object.keys(newWindows).forEach(key => {
-          newWindows[key] = { ...newWindows[key], isOpen: false };
-        });
-        return newWindows;
-      });
+    if (!isMobile && openApps.length === 0) {
+      openApp('about');
     }
-  }, [isMobile]);
+  }, [isMobile, openApp, openApps.length]);
 
   // Check if any window is open (for mobile home screen vs app view)
-  const hasOpenWindow = Object.values(windows).some(w => w.isOpen);
-
-
-  const [activeId, setActiveId] = useState('about');
+  const hasOpenWindow = openApps.length > 0;
 
   const focusWindow = useCallback((id) => {
-    setActiveId(id);
-    // Increment counter and assign to focused window
-    zCounter.current += 1;
-    const newZ = zCounter.current;
-    setWindows(prev => ({
-      ...prev,
-      [id]: { ...prev[id], zIndex: newZ }
-    }));
-  }, []);
-
-  const toggleWindow = useCallback((id) => {
-    const isMobileNow = typeof window !== 'undefined' && window.innerWidth < 768;
-
-    setWindows(prev => {
-      const isOpen = !prev[id].isOpen;
-
-      if (isOpen) {
-        setActiveId(id);
-        // Increment counter for new focused window
-        zCounter.current += 1;
-        const newZ = zCounter.current;
-
-        // On mobile, close all other windows when opening a new one
-        if (isMobileNow) {
-          const newWindows = { ...prev };
-          Object.keys(newWindows).forEach(key => {
-            if (key !== id) {
-              newWindows[key] = { ...newWindows[key], isOpen: false };
-            }
-          });
-          return {
-            ...newWindows,
-            [id]: { ...newWindows[id], isOpen: true, zIndex: newZ }
-          };
-        }
-
-        return {
-          ...prev,
-          [id]: { ...prev[id], isOpen: true, zIndex: newZ }
-        };
-      }
-
-      return {
-        ...prev,
-        [id]: { ...prev[id], isOpen }
-      };
-    });
-  }, []);
-
-  // Revisiting toggleWindow to be cleaner and strictly equivalent to original but memoized
-  // We need to access focusWindow.
-  // Ideally focusWindow should be defined before toggleWindow.
-  // We can just use the setter functional updates for everything to keep deps low.
-
-  // REdoc:
-  // focusWindow uses setWindows
-  // toggleWindow uses setWindows and calls focusWindow
+    bringToFront(id);
+  }, [bringToFront]);
 
 
   const dockItems = [
-    { id: 'about', label: t('windows.about'), icon: User, onClick: () => toggleWindow('about'), isOpen: windows.about.isOpen },
-    { id: 'projects', label: t('windows.projects'), icon: FolderOpen, onClick: () => toggleWindow('projects'), isOpen: windows.projects.isOpen },
-    { id: 'skills', label: t('windows.skills'), icon: Briefcase, onClick: () => toggleWindow('skills'), isOpen: windows.skills.isOpen },
-    { id: 'notes', label: 'Notes', icon: FileText, onClick: () => toggleWindow('notes'), isOpen: windows.notes.isOpen },
-    { id: 'store', label: 'App Store', icon: ShoppingBag, onClick: () => toggleWindow('store'), isOpen: windows.store.isOpen },
-    ...(installedApps.includes('calculator') ? [{ id: 'calculator', label: 'Calc', icon: Calculator, onClick: () => toggleWindow('calculator'), isOpen: windows.calculator.isOpen }] : []),
-    ...(installedApps.includes('tictactoe') ? [{ id: 'tictactoe', label: 'Game', icon: Gamepad2, onClick: () => toggleWindow('tictactoe'), isOpen: windows.tictactoe.isOpen }] : []),
-    { id: 'terminal', label: t('windows.terminal'), icon: Terminal, onClick: () => toggleWindow('terminal'), isOpen: windows.terminal.isOpen },
-    { id: 'ai', label: t('windows.ai'), icon: Bot, onClick: () => toggleWindow('ai'), isOpen: windows.ai.isOpen },
-    { id: 'github', label: t('windows.github'), icon: Github, onClick: () => toggleWindow('github'), isOpen: windows.github.isOpen },
-    { id: 'contact', label: t('windows.contact'), icon: Mail, onClick: () => toggleWindow('contact'), isOpen: windows.contact.isOpen },
+    { id: 'about', label: t('windows.about'), icon: User, onClick: () => toggleApp('about'), isOpen: isAppOpen('about') },
+    { id: 'projects', label: t('windows.projects'), icon: FolderOpen, onClick: () => toggleApp('projects'), isOpen: isAppOpen('projects') },
+    { id: 'skills', label: t('windows.skills'), icon: Briefcase, onClick: () => toggleApp('skills'), isOpen: isAppOpen('skills') },
+    { id: 'notes', label: 'Notes', icon: FileText, onClick: () => toggleApp('notes'), isOpen: isAppOpen('notes') },
+    { id: 'store', label: 'App Store', icon: ShoppingBag, onClick: () => toggleApp('store'), isOpen: isAppOpen('store') },
+    ...(installedApps.includes('calculator') ? [{ id: 'calculator', label: 'Calc', icon: Calculator, onClick: () => toggleApp('calculator'), isOpen: isAppOpen('calculator') }] : []),
+    ...(installedApps.includes('tictactoe') ? [{ id: 'tictactoe', label: 'Game', icon: Gamepad2, onClick: () => toggleApp('tictactoe'), isOpen: isAppOpen('tictactoe') }] : []),
+    { id: 'terminal', label: t('windows.terminal'), icon: Terminal, onClick: () => toggleApp('terminal'), isOpen: isAppOpen('terminal') },
+    { id: 'ai', label: t('windows.ai'), icon: Bot, onClick: () => toggleApp('ai'), isOpen: isAppOpen('ai') },
+    { id: 'github', label: t('windows.github'), icon: Github, onClick: () => toggleApp('github'), isOpen: isAppOpen('github') },
+    { id: 'contact', label: t('windows.contact'), icon: Mail, onClick: () => toggleApp('contact'), isOpen: isAppOpen('contact') },
   ];
 
   // Clock
@@ -221,20 +136,7 @@ const PortfolioContent = () => {
   const setTheme = useThemeStore(state => state.setTheme);
 
   // Voice Control
-  const { isListening, transcript, toggleListening } = useVoiceCommands(toggleWindow, windows, setTheme);
-
-  const actions = [
-    { label: t('nav.view'), icon: User, onClick: () => { toggleWindow('about'); focusWindow('about'); } },
-    { label: t('nav.view'), icon: FolderOpen, onClick: () => { toggleWindow('projects'); focusWindow('projects'); } },
-    { label: t('nav.view'), icon: Briefcase, onClick: () => { toggleWindow('skills'); focusWindow('skills'); } },
-    { label: t('nav.view'), icon: Terminal, onClick: () => { toggleWindow('terminal'); focusWindow('terminal'); } },
-    { label: t('nav.askAI'), icon: Bot, onClick: () => { toggleWindow('ai'); focusWindow('ai'); } },
-    { label: t('nav.view'), icon: Github, onClick: () => { toggleWindow('github'); focusWindow('github'); } },
-    { label: t('nav.view'), icon: Mail, onClick: () => { toggleWindow('contact'); focusWindow('contact'); } },
-    { label: 'Settings', icon: Settings, onClick: () => { toggleWindow('settings'); focusWindow('settings'); } },
-    { label: t('nav.hackerMode'), icon: Code, onClick: () => setHackerMode(prev => !prev) },
-    { label: t('nav.restart'), icon: Monitor, onClick: () => window.location.reload() },
-  ];
+  const { isListening, transcript, toggleListening } = useVoiceCommands(toggleApp, setTheme);
 
   const handleBootComplete = () => {
     setBooted(true);
@@ -272,20 +174,18 @@ const PortfolioContent = () => {
       if (windowKeys[e.key]) {
         e.preventDefault();
         const windowId = windowKeys[e.key];
-        toggleWindow(windowId);
-        focusWindow(windowId);
+        toggleApp(windowId);
       }
 
       // Escape to close active window
       if (e.key === 'Escape') {
-        const activeWindow = Object.entries(windows).find(([_, w]) => w.isOpen && w.zIndex === 10);
-        if (activeWindow) {
-          toggleWindow(activeWindow[0]);
+        if (activeApp) {
+          closeApp(activeApp);
         }
       }
 
       // Cmd/Ctrl + K for command palette
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setShowCmdPalette(prev => !prev);
       }
@@ -293,13 +193,11 @@ const PortfolioContent = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [windows]);
+  }, [activeApp, toggleApp, closeApp]);
 
   if (!booted) {
     return <BootScreen onComplete={handleBootComplete} />;
   }
-
-  const greeting = getGreeting();
 
   // Platform-specific wallpaper backgrounds (no animation)
   // iOS 17 inspired gradient for mobile
@@ -338,12 +236,8 @@ const PortfolioContent = () => {
         backgroundColor: 'var(--color-background)'
       }}
     >
-      {/* Decorative effects removed for cleaner professional presentation */}
-      {/* <Spotlight /> */}
-      {/* <ClickRipple /> */}
-
       {/* SEO Manager */}
-      <SEOManager activeWindow={activeId} />
+      <SEOManager activeWindow={activeApp} />
 
       {/* Achievement Popup */}
       <Achievement
@@ -352,13 +246,6 @@ const PortfolioContent = () => {
         description={achievementData.description}
         onClose={() => setShowAchievement(false)}
       />
-
-      {/* 3D Hero Scene Background - Disabled for static wallpaper */}
-      {/* 
-      <div className={`absolute inset-0 transition-opacity duration-1000 ${hackerMode ? 'opacity-0' : 'opacity-100'}`}>
-        <HeroScene />
-      </div> 
-      */}
 
       {/* Matrix Rain Effect */}
       {hackerMode && <MatrixRain />}
@@ -374,9 +261,7 @@ const PortfolioContent = () => {
       {/* Mobile Home Screen - show when no window is focused */}
       {isMobile && !hasOpenWindow && (
         <MobileHomeScreen
-          windows={windows}
-          toggleWindow={toggleWindow}
-          focusWindow={focusWindow}
+          openApp={openApp}
           installedApps={installedApps}
           dockItems={dockItems}
         />
@@ -417,7 +302,7 @@ const PortfolioContent = () => {
               </div>
               <div className="border-t border-white/10 my-1.5 mx-3"></div>
               <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between">
-                <span onClick={() => { toggleWindow('settings'); focusWindow('settings'); }}>{t('nav.preferences')}</span>
+                <span onClick={() => { openApp('settings'); }}>{t('nav.preferences')}</span>
                 <span className="text-[11px] text-white/40">⌘,</span>
               </div>
             </div>
@@ -428,19 +313,19 @@ const PortfolioContent = () => {
             <span className="text-white/80 hover:text-white cursor-pointer px-2 py-1 rounded hover:bg-white/10 transition-all">{t('nav.view')}</span>
             <div className="absolute top-full left-0 mt-1 w-56 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl py-1.5 hidden group-hover:block rtl:left-auto rtl:right-0">
               <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-white/30">{t('nav.view')}</div>
-              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => { toggleWindow('about'); focusWindow('about'); }}>
+              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => { openApp('about'); }}>
                 <span>{t('windows.about')}</span>
                 <span className="text-[11px] text-white/40">1</span>
               </div>
-              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => { toggleWindow('projects'); focusWindow('projects'); }}>
+              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => { openApp('projects'); }}>
                 <span>{t('windows.projects')}</span>
                 <span className="text-[11px] text-white/40">2</span>
               </div>
-              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => { toggleWindow('skills'); focusWindow('skills'); }}>
+              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => { openApp('skills'); }}>
                 <span>{t('windows.skills')}</span>
                 <span className="text-[11px] text-white/40">3</span>
               </div>
-              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => { toggleWindow('terminal'); focusWindow('terminal'); }}>
+              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => { openApp('terminal'); }}>
                 <span>{t('windows.terminal')}</span>
                 <span className="text-[11px] text-white/40">4</span>
               </div>
@@ -466,7 +351,7 @@ const PortfolioContent = () => {
           <div className="relative group">
             <span className="text-white/80 hover:text-white cursor-pointer px-2 py-1 rounded hover:bg-white/10 transition-all">{t('nav.help')}</span>
             <div className="absolute top-full left-0 mt-1 w-56 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl py-1.5 hidden group-hover:block rtl:left-auto rtl:right-0">
-              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5" onClick={() => { toggleWindow('ai'); focusWindow('ai'); }}>
+              <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5" onClick={() => { openApp('ai'); }}>
                 {t('nav.askAI')}
               </div>
               <div className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white/80 hover:text-white rounded-lg mx-1.5 flex items-center justify-between" onClick={() => setShowCmdPalette(true)}>
@@ -552,16 +437,16 @@ const PortfolioContent = () => {
 
       {/* Command Palette - Press Ctrl+K */}
       <CommandPalette
-        windows={windows}
-        toggleWindow={toggleWindow}
+        isOpen={showCmdPalette}
+        onClose={() => setShowCmdPalette(false)}
+        toggleApp={toggleApp}
         focusWindow={focusWindow}
         setTheme={setTheme}
       />
 
       {/* Right-click Context Menu */}
       <ContextMenu
-        toggleWindow={toggleWindow}
-        focusWindow={focusWindow}
+        openApp={openApp}
       />
 
       {/* Main Content Area */}
@@ -574,7 +459,7 @@ const PortfolioContent = () => {
             availableApps={availableApps}
             iconPositions={iconPositions}
             setIconPositions={setIconPositions}
-            toggleWindow={toggleWindow}
+            toggleWindow={toggleApp}
             focusWindow={focusWindow}
           />
         </div>
@@ -586,16 +471,16 @@ const PortfolioContent = () => {
             key="window-about"
             id="about"
             title={t('windows.about')}
-            isOpen={windows.about.isOpen}
-            onClose={() => toggleWindow('about')}
-            onMinimize={() => toggleWindow('about')}
-            zIndex={windows.about.zIndex}
+            isOpen={isAppOpen('about')}
+            onClose={() => closeApp('about')}
+            onMinimize={() => closeApp('about')}
+            zIndex={getAppZIndex('about')}
             onFocus={() => focusWindow('about')}
           >
             <HeroProfile
-              onViewProjects={() => { toggleWindow('projects'); focusWindow('projects'); }}
-              onContact={() => { toggleWindow('contact'); focusWindow('contact'); }}
-              onSkills={() => { toggleWindow('skills'); focusWindow('skills'); }}
+              onViewProjects={() => openApp('projects')}
+              onContact={() => openApp('contact')}
+              onSkills={() => openApp('skills')}
             />
           </Window>
 
@@ -604,20 +489,17 @@ const PortfolioContent = () => {
             key="window-projects"
             id="projects"
             title={t('windows.projects')}
-            isOpen={windows.projects.isOpen}
-            onClose={() => toggleWindow('projects')}
-            onMinimize={() => toggleWindow('projects')}
-            zIndex={windows.projects.zIndex}
+            isOpen={isAppOpen('projects')}
+            onClose={() => closeApp('projects')}
+            onMinimize={() => closeApp('projects')}
+            zIndex={getAppZIndex('projects')}
             onFocus={() => focusWindow('projects')}
           >
             <BentoGrid
               projects={projects}
               onOpenProject={(project) => {
                 setSelectedProject(project);
-                if (!windows.projectDetails.isOpen) {
-                  toggleWindow('projectDetails');
-                }
-                focusWindow('projectDetails');
+                openApp('projectDetails');
               }}
             />
           </Window>
@@ -627,13 +509,13 @@ const PortfolioContent = () => {
             key="window-project-details"
             id="projectDetails"
             title={selectedProject ? selectedProject.title : 'Project Details'}
-            isOpen={windows.projectDetails.isOpen}
-            onClose={() => toggleWindow('projectDetails')}
-            onMinimize={() => toggleWindow('projectDetails')}
-            zIndex={windows.projectDetails.zIndex}
+            isOpen={isAppOpen('projectDetails')}
+            onClose={() => closeApp('projectDetails')}
+            onMinimize={() => closeApp('projectDetails')}
+            zIndex={getAppZIndex('projectDetails')}
             onFocus={() => focusWindow('projectDetails')}
           >
-            <ProjectWindow project={selectedProject} onClose={() => toggleWindow('projectDetails')} />
+            <ProjectWindow project={selectedProject} onClose={() => closeApp('projectDetails')} />
           </Window>
 
           {/* Terminal Window */}
@@ -641,10 +523,10 @@ const PortfolioContent = () => {
             key="window-terminal"
             id="terminal"
             title={t('windows.terminal')}
-            isOpen={windows.terminal.isOpen}
-            onClose={() => toggleWindow('terminal')}
-            onMinimize={() => toggleWindow('terminal')}
-            zIndex={windows.terminal.zIndex}
+            isOpen={isAppOpen('terminal')}
+            onClose={() => closeApp('terminal')}
+            onMinimize={() => closeApp('terminal')}
+            zIndex={getAppZIndex('terminal')}
             onFocus={() => focusWindow('terminal')}
           >
             <InteractiveTerminal onHackerMode={setHackerMode} />
@@ -655,10 +537,10 @@ const PortfolioContent = () => {
             key="window-contact"
             id="contact"
             title={t('windows.contact')}
-            isOpen={windows.contact.isOpen}
-            onClose={() => toggleWindow('contact')}
-            onMinimize={() => toggleWindow('contact')}
-            zIndex={windows.contact.zIndex}
+            isOpen={isAppOpen('contact')}
+            onClose={() => closeApp('contact')}
+            onMinimize={() => closeApp('contact')}
+            zIndex={getAppZIndex('contact')}
             onFocus={() => focusWindow('contact')}
           >
             <ContactForm />
@@ -669,10 +551,10 @@ const PortfolioContent = () => {
             key="window-ai"
             id="ai"
             title={t('windows.ai')}
-            isOpen={windows.ai.isOpen}
-            onClose={() => toggleWindow('ai')}
-            onMinimize={() => toggleWindow('ai')}
-            zIndex={windows.ai.zIndex}
+            isOpen={isAppOpen('ai')}
+            onClose={() => closeApp('ai')}
+            onMinimize={() => closeApp('ai')}
+            zIndex={getAppZIndex('ai')}
             onFocus={() => focusWindow('ai')}
           >
             <AiAssistant />
@@ -683,10 +565,10 @@ const PortfolioContent = () => {
             key="window-github"
             id="github"
             title={t('windows.github')}
-            isOpen={windows.github.isOpen}
-            onClose={() => toggleWindow('github')}
-            onMinimize={() => toggleWindow('github')}
-            zIndex={windows.github.zIndex}
+            isOpen={isAppOpen('github')}
+            onClose={() => closeApp('github')}
+            onMinimize={() => closeApp('github')}
+            zIndex={getAppZIndex('github')}
             onFocus={() => focusWindow('github')}
           >
             <GitHubWidget />
@@ -697,10 +579,10 @@ const PortfolioContent = () => {
             key="window-skills"
             id="skills"
             title={t('windows.skills')}
-            isOpen={windows.skills.isOpen}
-            onClose={() => toggleWindow('skills')}
-            onMinimize={() => toggleWindow('skills')}
-            zIndex={windows.skills.zIndex}
+            isOpen={isAppOpen('skills')}
+            onClose={() => closeApp('skills')}
+            onMinimize={() => closeApp('skills')}
+            zIndex={getAppZIndex('skills')}
             onFocus={() => focusWindow('skills')}
           >
             <SkillsWindow />
@@ -713,10 +595,10 @@ const PortfolioContent = () => {
             key="window-notes"
             id="notes"
             title="Dev Notes"
-            isOpen={windows.notes.isOpen}
-            onClose={() => toggleWindow('notes')}
-            onMinimize={() => toggleWindow('notes')}
-            zIndex={windows.notes.zIndex}
+            isOpen={isAppOpen('notes')}
+            onClose={() => closeApp('notes')}
+            onMinimize={() => closeApp('notes')}
+            zIndex={getAppZIndex('notes')}
             onFocus={() => focusWindow('notes')}
           >
             <NotesWindow />
@@ -727,18 +609,17 @@ const PortfolioContent = () => {
             key="window-store"
             id="store"
             title="App Store"
-            isOpen={windows.store.isOpen}
-            onClose={() => toggleWindow('store')}
-            onMinimize={() => toggleWindow('store')}
-            zIndex={windows.store.zIndex}
+            isOpen={isAppOpen('store')}
+            onClose={() => closeApp('store')}
+            onMinimize={() => closeApp('store')}
+            zIndex={getAppZIndex('store')}
             onFocus={() => focusWindow('store')}
           >
             <AppStoreWindow
               installedApps={installedApps}
               onInstall={(appId) => setInstalledApps(prev => [...prev, appId])}
               onOpen={(appId) => {
-                toggleWindow(appId);
-                focusWindow(appId);
+                openApp(appId);
               }}
             />
           </Window>
@@ -749,10 +630,10 @@ const PortfolioContent = () => {
               key="window-calculator"
               id="calculator"
               title="Calculator"
-              isOpen={windows.calculator.isOpen}
-              onClose={() => toggleWindow('calculator')}
-              onMinimize={() => toggleWindow('calculator')}
-              zIndex={windows.calculator.zIndex}
+              isOpen={isAppOpen('calculator')}
+              onClose={() => closeApp('calculator')}
+              onMinimize={() => closeApp('calculator')}
+              zIndex={getAppZIndex('calculator')}
               onFocus={() => focusWindow('calculator')}
             >
               <CalculatorApp />
@@ -765,10 +646,10 @@ const PortfolioContent = () => {
               key="window-tictactoe"
               id="tictactoe"
               title="Tic Tac Toe"
-              isOpen={windows.tictactoe.isOpen}
-              onClose={() => toggleWindow('tictactoe')}
-              onMinimize={() => toggleWindow('tictactoe')}
-              zIndex={windows.tictactoe.zIndex}
+              isOpen={isAppOpen('tictactoe')}
+              onClose={() => closeApp('tictactoe')}
+              onMinimize={() => closeApp('tictactoe')}
+              zIndex={getAppZIndex('tictactoe')}
               onFocus={() => focusWindow('tictactoe')}
             >
               <TicTacToeApp />
@@ -780,10 +661,10 @@ const PortfolioContent = () => {
             key="window-settings"
             id="settings"
             title="System Preferences"
-            isOpen={windows.settings.isOpen}
-            onClose={() => toggleWindow('settings')}
-            onMinimize={() => toggleWindow('settings')}
-            zIndex={windows.settings.zIndex}
+            isOpen={isAppOpen('settings')}
+            onClose={() => closeApp('settings')}
+            onMinimize={() => closeApp('settings')}
+            zIndex={getAppZIndex('settings')}
             onFocus={() => focusWindow('settings')}
           >
             <SettingsWindow />
