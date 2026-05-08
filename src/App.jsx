@@ -60,19 +60,18 @@ const PortfolioContent = () => {
     toggleApp,
     bringToFront,
     isAppOpen,
-    getAppZIndex
+    getAppZIndex,
+    isMobile,
+    setIsMobile
   } = useAppStore();
 
   // Mobile detection - initialize correctly from start
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' && window.innerWidth < 768
-  );
-
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Initialize
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [setIsMobile]);
 
   // Enable keyboard shortcuts (Cmd+W, Cmd+Q, Escape)
   useKeyboardShortcuts();
@@ -137,7 +136,7 @@ const PortfolioContent = () => {
   const setTheme = useThemeStore(state => state.setTheme);
 
   // Voice Control
-  const { isListening, transcript, toggleListening } = useVoiceCommands(toggleApp, null, setTheme);
+  const { isListening, transcript, toggleListening } = useVoiceCommands(toggleApp, setTheme);
 
   const handleBootComplete = () => {
     setBooted(true);
@@ -186,7 +185,7 @@ const PortfolioContent = () => {
       }
 
       // Cmd/Ctrl + K for command palette
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setShowCmdPalette(prev => !prev);
       }

@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 test('desktop layout is interactable', async ({ page }) => {
   await page.goto('http://localhost:5173/portfolio2/');
 
-  // Wait a bit for the app to load
-  await page.waitForTimeout(5000);
+  // Wait for the app to load
+  await page.waitForLoadState('networkidle');
 
   // Take a screenshot to see where we are
   await page.screenshot({ path: 'verification_desktop_debug.png' });

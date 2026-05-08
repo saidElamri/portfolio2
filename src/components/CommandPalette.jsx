@@ -64,7 +64,6 @@ const CommandPalette = ({ isOpen, onClose, toggleApp, focusWindow, setTheme }) =
             cmd.action();
         } else {
             toggleApp(cmd.id);
-            focusWindow(cmd.id);
         }
         onClose();
         setQuery('');

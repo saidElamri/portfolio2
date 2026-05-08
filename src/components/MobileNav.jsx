@@ -30,7 +30,7 @@ const MobileNav = ({ items }) => {
             <motion.div
                 className={`md:hidden fixed bottom-4 left-4 right-4 bg-[#1c1c1e]/95 backdrop-blur-2xl border border-white/10 z-[1000] transition-all duration-300 ease-spring pointer-events-auto flex flex-col ${isExpanded ? 'rounded-[32px] shadow-2xl' : 'rounded-[24px] pb-4 pt-2 px-4 shadow-lg'}`}
                 animate={{
-                    height: isExpanded ? 'calc(100vh - var(--mobile-nav-height, 56px) - 32px)' : 'auto',
+                    height: isExpanded ? 'calc(100vh - var(--mobile-nav-height, 56px) - (var(--mobile-nav-bottom-offset, 16px) * 2))' : 'auto',
                 }}
             >
                 {/* Drawer Handle (Visible only when COLLAPSED or dragging logic exists) */}

@@ -32,6 +32,7 @@
   /* Layout Shell Heights */
   --nav-height: 28px;
   --mobile-nav-height: 56px;
+  --mobile-nav-bottom-offset: 16px;
   --dock-height: 80px;
   --mobile-home-indicator: 20px;
   

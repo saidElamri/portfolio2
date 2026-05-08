@@ -163,7 +163,7 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                 style={{
                     backgroundColor: theme.surface + 'f5',
                     border: `1px solid ${theme.border}`,
-                    height: isMobile ? '100%' : (isMaximized ? '100vh' : undefined),
+                    height: isMobile ? '100%' : (isMaximized ? '100%' : undefined),
                 }}
             >
                 {/* TopBar */}
