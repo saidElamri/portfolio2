@@ -133,10 +133,10 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                 position: 'fixed',
                 zIndex: zIndex,
                 ...(isMobile ? {
-                    top: `calc(var(--mobile-nav-height, 64px) + var(--safe-area-top, 0px))`,
+                    top: `calc(var(--mobile-nav-height, 56px) + var(--safe-area-top, 0px))`,
                     left: 0,
                     right: 0,
-                    bottom: `calc(var(--dock-height, 90px) + var(--safe-area-bottom, 0px))`,
+                    bottom: `calc(var(--dock-height, 80px) + var(--safe-area-bottom, 0px))`,
                     width: '100%',
                 } : {
                     ...position,

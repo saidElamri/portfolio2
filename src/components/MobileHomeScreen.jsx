@@ -7,9 +7,7 @@ import {
 import useThemeStore, { themes } from '../stores/themeStore';
 
 const MobileHomeScreen = ({
-    windows,
-    toggleWindow,
-    focusWindow,
+    openApp,
     installedApps,
     dockItems
 }) => {
@@ -39,8 +37,7 @@ const MobileHomeScreen = ({
         icon: appDefinitions[item.id]?.icon || item.icon,
         gradient: appDefinitions[item.id]?.gradient || 'from-gray-500 to-gray-700',
         onClick: () => {
-            toggleWindow(item.id);
-            focusWindow(item.id);
+            openApp(item.id);
         }
     }));
 

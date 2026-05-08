@@ -21,7 +21,7 @@ const MobileStatusBar = () => {
             className="fixed top-0 left-0 right-0 z-[100] md:hidden"
         >
             {/* Premium App Header */}
-            <div className="relative h-14 flex items-center justify-between px-6 bg-[#121212]/80 backdrop-blur-xl border-b border-white/5">
+            <div className="relative h-[var(--mobile-nav-height,56px)] flex items-center justify-between px-6 bg-[#121212]/80 backdrop-blur-xl border-b border-white/5">
                 {/* Brand / Context */}
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">

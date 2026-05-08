@@ -6,8 +6,7 @@ import {
 } from 'lucide-react';
 import useThemeStore, { themes } from '../stores/themeStore';
 
-const CommandPalette = ({ windows, toggleWindow, focusWindow, setTheme }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const CommandPalette = ({ isOpen, onClose, toggleApp, focusWindow, setTheme }) => {
     const [query, setQuery] = useState('');
     const [selectedIndex, setSelectedIndex] = useState(0);
     const inputRef = useRef(null);
@@ -39,36 +38,6 @@ const CommandPalette = ({ windows, toggleWindow, focusWindow, setTheme }) => {
         return acc;
     }, {});
 
-    // Open palette on Ctrl+K or Cmd+K
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            // Ctrl+K or Cmd+K to open
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                setIsOpen(prev => !prev);
-                setQuery('');
-                setSelectedIndex(0);
-            }
-
-            // Escape to close
-            if (e.key === 'Escape' && isOpen) {
-                setIsOpen(false);
-            }
-
-            // Number shortcuts when palette is closed
-            if (!isOpen && !e.ctrlKey && !e.metaKey && !e.altKey) {
-                const windowMap = { '1': 'about', '2': 'projects', '3': 'terminal', '4': 'contact', '5': 'ai', '6': 'github' };
-                if (windowMap[e.key]) {
-                    e.preventDefault();
-                    toggleWindow(windowMap[e.key]);
-                    focusWindow(windowMap[e.key]);
-                }
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, toggleWindow, focusWindow]);
 
     // Focus input when opened
     useEffect(() => {
@@ -94,10 +63,10 @@ const CommandPalette = ({ windows, toggleWindow, focusWindow, setTheme }) => {
         if (cmd.action) {
             cmd.action();
         } else {
-            toggleWindow(cmd.id);
+            toggleApp(cmd.id);
             focusWindow(cmd.id);
         }
-        setIsOpen(false);
+        onClose();
         setQuery('');
     };
 
@@ -110,7 +79,7 @@ const CommandPalette = ({ windows, toggleWindow, focusWindow, setTheme }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => setIsOpen(false)}
+                        onClick={onClose}
                         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200]"
                     />
 

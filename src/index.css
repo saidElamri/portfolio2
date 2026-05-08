@@ -31,8 +31,8 @@
   
   /* Layout Shell Heights */
   --nav-height: 28px;
-  --mobile-nav-height: 64px;
-  --dock-height: 90px;
+  --mobile-nav-height: 56px;
+  --dock-height: 80px;
   --mobile-home-indicator: 20px;
   
   /* Dynamic viewport height fallback */
