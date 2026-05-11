@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { motion, useMotionValue, useTransform, useAnimation, AnimatePresence } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useAnimation, useDragControls } from 'framer-motion';
 import useThemeStore, { themes } from '../stores/themeStore';
+import useAppStore from '../stores/appStore';
 import TopBar from './TopBar';
 
 const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinimize }) => {
     const [isMaximized, setIsMaximized] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const { currentTheme } = useThemeStore();
+    const { activeApp } = useAppStore();
     const theme = themes[currentTheme];
+    const isActive = activeApp === id;
 
     // Mobile detection
     const [isMobile, setIsMobile] = useState(false);
@@ -38,6 +41,8 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
             });
         }
     }, [isMobile, isOpen, controls]);
+
+    const dragControls = useDragControls();
 
     if (!isOpen) return null;
 
@@ -129,18 +134,22 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
             initial="initial"
             animate={isMobile ? controls : "animate"}
             exit="exit"
+            drag={!isMobile && !isMaximized}
+            dragControls={dragControls}
+            dragListener={false} 
+            dragMomentum={false}
             style={{
                 position: 'fixed',
                 zIndex: zIndex,
                 ...(isMobile ? {
-                    top: `calc(var(--mobile-nav-height, 56px) + var(--safe-area-top, 0px))`,
+                    top: `calc(var(--mobile-nav-height, 64px) + env(safe-area-inset-top, 0px))`,
                     left: 0,
                     right: 0,
-                    bottom: `calc(var(--dock-height, 80px) + var(--safe-area-bottom, 0px))`,
+                    bottom: `calc(var(--dock-height, 90px) + env(safe-area-inset-bottom, 0px))`,
                     width: '100%',
                 } : {
                     ...position,
-                    width: isMaximized ? '100%' : 'min(90vw, 700px)',
+                    width: isMaximized ? '100%' : 'min(95vw, 900px)',
                     height: isMaximized ? '100%' : undefined,
                     top: isMaximized ? 0 : position.top,
                     left: isMaximized ? 0 : position.left,
@@ -153,17 +162,30 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className="flex flex-col"
+            _dragControls={dragControls}
         >
-            {/* Window container */}
+            {/* ─── OUTER SHELL: Glassmorphism + border ─── */}
             <div
                 className={`
-                    flex flex-col backdrop-blur-xl
-                    ${isMobile ? 'h-full rounded-t-3xl' : 'rounded-xl shadow-2xl'}
+                    flex flex-col overflow-hidden transition-all duration-500
+                    ${isMobile ? 'h-full rounded-t-[2.5rem]' : ''}
+                    ${isActive && !isMobile ? 'active-window-glow' : ''}
+                    relative group/window
                 `}
                 style={{
-                    backgroundColor: theme.surface + 'f5',
-                    border: `1px solid ${theme.border}`,
-                    height: isMobile ? '100%' : (isMaximized ? '100%' : undefined),
+                    /* RULE: bg-black/60 + backdrop-blur-xl */
+                    backgroundColor: 'rgba(0, 0, 0, 0.60)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    /* RULE: 1px border border-white/20 */
+                    border: '1px solid rgba(255, 255, 255, 0.20)',
+                    boxShadow: isActive
+                        ? `0 25px 60px -12px rgba(0, 0, 0, 0.8), 0 0 30px -10px ${theme.accent}44, inset 0 1px 0 rgba(255,255,255,0.06)`
+                        : (isHovered 
+                            ? `0 25px 60px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255,255,255,0.06)` 
+                            : `0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.04)`
+                        ),
+                    height: isMobile ? '100%' : (isMaximized ? '100vh' : undefined),
                 }}
             >
                 {/* TopBar */}
@@ -179,40 +201,46 @@ const Window = ({ id, title, children, isOpen, onClose, zIndex, onFocus, onMinim
                     onMaximize={toggleMaximize}
                     onFocus={onFocus}
                     setIsHovered={setIsHovered}
-                    dragHandlers={dragHandlers}
+                    dragHandlers={isMobile ? dragHandlers : {}}
+                    _dragControls={dragControls} 
                 />
 
-                {/* Content */}
+                {/* ─── SCROLL CONTAINER: Safe Flow Architecture ─── */}
                 <div
                     ref={contentRef}
                     className={`
-                        flex-1 overflow-y-auto overflow-x-hidden flex flex-col min-h-0
-                        ${!isMaximized && !isMobile ? 'min-h-[320px] max-h-[60vh]' : ''}
+                        flex-1 overflow-y-auto overflow-x-hidden min-h-0 relative
+                        custom-scrollbar
+                        ${!isMaximized && !isMobile ? 'min-h-[450px] max-h-[85vh]' : ''}
                     `}
-                    style={{ color: theme.text }}
                 >
-                    <div className="flex-1 flex flex-col min-h-0">
-                        {children}
+                    {/* Mandatory safe padding zone */}
+                    <div className="px-12 py-10">
+                        {/* Centered professional content block without absolute escapes */}
+                        <div className="max-w-4xl mx-auto relative">
+                            {children}
+                        </div>
                     </div>
 
                     {/* Mobile Home Indicator */}
                     {isMobile && (
                         <div className="flex justify-center py-4 shrink-0">
-                            <div className="w-32 h-1 bg-white/30 rounded-full" />
+                            <div className="w-24 h-1.5 bg-white/10 rounded-full" />
                         </div>
                     )}
                 </div>
 
-                {/* Bottom accent line */}
+                {/* Bottom accent glow */}
                 <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none"
+                    className="absolute bottom-0 left-0 right-0 h-[1px] pointer-events-none"
                     style={{
-                        background: `linear-gradient(90deg, transparent, ${theme.accent}, ${theme.accentSecondary}, ${theme.accent}, transparent)`
+                        background: `linear-gradient(90deg, transparent, ${theme.accent}66, transparent)`
                     }}
                     animate={{
-                        opacity: isHovered ? 0.6 : 0,
+                        opacity: isHovered ? 1 : 0,
+                        scaleX: isHovered ? 1 : 0.5
                     }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.5 }}
                 />
             </div>
         </motion.div>

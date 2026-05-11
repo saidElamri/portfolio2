@@ -111,12 +111,20 @@ const useAppStore = create(
                 };
             }),
             
-            // Close an app
             closeApp: (id) => set((state) => {
                 const newOpenApps = state.openApps.filter(app => app.id !== id);
-                const newActiveApp = state.activeApp === id 
-                    ? (newOpenApps.length > 0 ? newOpenApps[newOpenApps.length - 1].id : null)
-                    : state.activeApp;
+                
+                let newActiveApp = state.activeApp;
+                if (state.activeApp === id) {
+                    if (newOpenApps.length > 0) {
+                        const topApp = newOpenApps.reduce((prev, current) => 
+                            (prev.zIndex > current.zIndex) ? prev : current
+                        );
+                        newActiveApp = topApp.id;
+                    } else {
+                        newActiveApp = null;
+                    }
+                }
                 
                 return {
                     openApps: newOpenApps,

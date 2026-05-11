@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useThemeStore, { themes } from '../stores/themeStore';
+import useAppStore from '../stores/appStore';
 
 const InteractiveTerminal = ({ onHackerMode }) => {
     const { t } = useTranslation();
     const { setTheme, currentTheme } = useThemeStore();
+    const { openApp, closeApp, getAllAppIds } = useAppStore();
     const [gameState, setGameState] = useState({ playing: false, target: 0, attempts: 0 });
     const [history, setHistory] = useState([
         { type: 'output', content: t('terminal.welcome') },
@@ -82,6 +84,7 @@ const InteractiveTerminal = ({ onHackerMode }) => {
                             <div><span className="text-yellow-400">journey</span> - Career timeline</div>
                             <div><span className="text-yellow-400">coffee</span> - Need caffeine?</div>
                             <div><span className="text-yellow-400">quote</span> - AI wisdom</div>
+                            <div><span className="text-yellow-400">open [app]</span> - Launch window</div>
                             <div><span className="text-red-400">sudo hire</span> - Hire me!</div>
                         </div>
                         <div className="text-white/40 text-xs mt-2">Tip: Use ↑↓ arrows to navigate command history</div>
@@ -208,6 +211,28 @@ const InteractiveTerminal = ({ onHackerMode }) => {
                     </div>
                 );
                 if (onHackerMode) onHackerMode(true);
+                break;
+            case 'open':
+            case 'launch':
+                const appId = cleanCmd.split(' ')[1];
+                const allApps = getAllAppIds();
+                if (!appId) {
+                    output = `Usage: open <app_name>\nAvailable apps: ${allApps.join(', ')}`;
+                } else if (allApps.includes(appId)) {
+                    openApp(appId);
+                    output = `Opening ${appId}...`;
+                } else {
+                    output = `App not found. Available apps: ${allApps.join(', ')}`;
+                }
+                break;
+            case 'close':
+                const closeAppId = cleanCmd.split(' ')[1];
+                if (!closeAppId) {
+                    output = `Usage: close <app_name>`;
+                } else {
+                    closeApp(closeAppId);
+                    output = `Closed ${closeAppId}.`;
+                }
                 break;
             case 'exit':
                 output = 'Exiting matrix... Welcome back to reality.';

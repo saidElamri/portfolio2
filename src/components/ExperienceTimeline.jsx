@@ -1,73 +1,102 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, GraduationCap, Award } from 'lucide-react';
-
-const experiences = [
-    {
-        type: 'work',
-        title: 'Senior Full Stack Developer',
-        company: 'Tech Company',
-        period: '2022 - Present',
-        description: 'Leading development of scalable web applications, mentoring junior developers, and implementing AI-powered features.',
-        highlights: ['React', 'Node.js', 'AWS', 'AI/ML']
-    },
-    {
-        type: 'work',
-        title: 'Full Stack Developer',
-        company: 'Startup Inc',
-        period: '2020 - 2022',
-        description: 'Built core platform features from scratch, optimized performance, and improved user engagement by 40%.',
-        highlights: ['TypeScript', 'PostgreSQL', 'Docker']
-    },
-    {
-        type: 'education',
-        title: 'Computer Science',
-        company: 'University',
-        period: '2016 - 2020',
-        description: 'Bachelor\'s degree with focus on software engineering and distributed systems.',
-        highlights: ['Algorithms', 'Distributed Systems']
-    },
-];
+import { Calendar, Briefcase, GraduationCap, Award, Sparkles } from 'lucide-react';
+import { journey } from '../data/portfolio';
+import useThemeStore, { themes } from '../stores/themeStore';
 
 const TimelineItem = ({ item, index, isLast }) => {
-    const Icon = item.type === 'work' ? Briefcase : item.type === 'education' ? GraduationCap : Award;
+    const { currentTheme } = useThemeStore();
+    const theme = themes[currentTheme];
+
+    const containerVariants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: { 
+            opacity: 1, 
+            x: 0,
+            transition: { 
+                type: "spring", 
+                stiffness: 260, 
+                damping: 20,
+                delay: index * 0.1 
+            }
+        }
+    };
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.15 }}
-            className="relative pl-8 pb-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="relative pl-10 pb-12 last:pb-0"
         >
-            {/* Timeline line */}
+            {/* Connection Line */}
             {!isLast && (
-                <div className="absolute left-[11px] top-8 bottom-0 w-px bg-gradient-to-b from-white/20 to-transparent" />
+                <div 
+                    className="absolute left-[15px] top-8 bottom-0 w-0.5 opacity-20"
+                    style={{ 
+                        background: `linear-gradient(to bottom, ${theme.accent}, transparent)` 
+                    }}
+                />
             )}
 
-            {/* Icon dot */}
-            <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-white/[0.08] border border-white/[0.15] flex items-center justify-center">
-                <Icon className="w-3 h-3 text-white/60" />
+            {/* Timeline Marker */}
+            <div 
+                className="absolute left-0 top-0 w-8 h-8 rounded-2xl flex items-center justify-center shadow-lg z-10 transition-transform hover:scale-110"
+                style={{ 
+                    backgroundColor: theme.surface, 
+                    border: `1px solid ${theme.border}`,
+                    color: theme.accent
+                }}
+            >
+                <div className="text-sm font-bold">{item.icon}</div>
             </div>
 
-            {/* Content */}
-            <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 hover:bg-white/[0.05] transition-colors">
-                <div className="flex items-start justify-between mb-2">
+            {/* Card Content */}
+            <div 
+                className="p-6 rounded-[2rem] border transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px]"
+                style={{ 
+                    backgroundColor: theme.surface + '40', 
+                    borderColor: theme.border 
+                }}
+            >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
                     <div>
-                        <h4 className="font-semibold text-white text-sm">{item.title}</h4>
-                        <p className="text-xs text-white/50">{item.company}</p>
+                        <h4 className="text-lg font-black tracking-tight" style={{ color: theme.text }}>
+                            {item.title}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1">
+                            <Calendar className="w-3.5 h-3.5 opacity-50" style={{ color: theme.text }} />
+                            <span className="text-xs font-bold uppercase tracking-widest opacity-50" style={{ color: theme.text }}>
+                                {item.year}
+                            </span>
+                        </div>
                     </div>
-                    <span className="text-[10px] text-white/30 uppercase tracking-wider bg-white/[0.05] px-2 py-0.5 rounded">
-                        {item.period}
-                    </span>
+                    <div 
+                        className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                        style={{ backgroundColor: theme.accent + '20', color: theme.accent }}
+                    >
+                        Milestone
+                    </div>
                 </div>
 
-                <p className="text-xs text-white/40 leading-relaxed mb-3">{item.description}</p>
+                <p className="text-sm font-medium leading-relaxed mb-5 opacity-70" style={{ color: theme.text }}>
+                    {item.description}
+                </p>
 
-                <div className="flex flex-wrap gap-1.5">
-                    {item.highlights.map((h) => (
-                        <span key={h} className="px-2 py-0.5 text-[10px] text-white/50 bg-white/[0.05] rounded-full">
-                            {h}
-                        </span>
+                <div className="flex flex-wrap gap-2">
+                    {item.skills.map((skill, i) => (
+                        <div 
+                            key={i}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border transition-colors hover:bg-accent hover:border-accent hover:text-white"
+                            style={{ 
+                                backgroundColor: theme.surface,
+                                borderColor: theme.border,
+                                color: theme.text
+                            }}
+                        >
+                            <Sparkles className="w-3 h-3 text-accent" style={{ color: theme.accent }} />
+                            {skill}
+                        </div>
                     ))}
                 </div>
             </div>
@@ -76,21 +105,32 @@ const TimelineItem = ({ item, index, isLast }) => {
 };
 
 const ExperienceTimeline = () => {
+    const { currentTheme } = useThemeStore();
+    const theme = themes[currentTheme];
+
     return (
-        <div>
-            <div className="flex items-center justify-between mb-6">
-                <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">
-                    Experience
-                </h3>
+        <div className="p-4 md:p-8">
+            <div className="flex items-center gap-4 mb-10">
+                <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center">
+                    <Briefcase className="w-6 h-6 text-accent" style={{ color: theme.accent }} />
+                </div>
+                <div>
+                    <h3 className="text-2xl font-black tracking-tighter" style={{ color: theme.text }}>
+                        Journey
+                    </h3>
+                    <p className="text-xs font-bold uppercase tracking-widest opacity-40" style={{ color: theme.text }}>
+                        Evolution of a developer
+                    </p>
+                </div>
             </div>
 
-            <div className="space-y-0">
-                {experiences.map((exp, index) => (
+            <div className="max-w-2xl">
+                {journey.map((item, index) => (
                     <TimelineItem
                         key={index}
-                        item={exp}
+                        item={item}
                         index={index}
-                        isLast={index === experiences.length - 1}
+                        isLast={index === journey.length - 1}
                     />
                 ))}
             </div>
@@ -99,3 +139,4 @@ const ExperienceTimeline = () => {
 };
 
 export default ExperienceTimeline;
+

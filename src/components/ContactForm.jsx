@@ -34,13 +34,13 @@ const ContactForm = () => {
     };
 
     return (
-        <div style={{ paddingLeft: '16px' }}>
+        <div>
             {/* Header */}
-            <h2 className="text-xl font-bold text-white">{t('contact.title')}</h2>
+            <h2 className="text-2xl font-bold text-white tracking-tight">{t('contact.title')}</h2>
 
             <div className="h-3"></div>
 
-            <p className="text-white/50 text-sm">{t('contact.subtitle')}</p>
+            <p className="text-white/40 text-sm leading-relaxed">{t('contact.subtitle')}</p>
 
             <div className="h-6"></div>
 
@@ -134,7 +134,7 @@ const ContactForm = () => {
                 <button
                     type="submit"
                     disabled={status === 'loading' || status === 'success'}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-70"
+                    className="w-full flex items-center justify-center gap-2 py-3 min-h-[44px] rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-70"
                     style={{
                         backgroundColor: theme.accent,
                         color: theme.background

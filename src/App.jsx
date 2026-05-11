@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence } from 'framer-motion';
 import AiAssistant from './components/AiAssistant';
-import { Terminal, FolderOpen, Mail, User, Github, Code, Monitor, Bot, Briefcase, Download, Settings, Mic, MicOff, Linkedin, FileText, ShoppingBag, Calculator, Gamepad2 } from 'lucide-react';
+import { Terminal, FolderOpen, Mail, User, Github, Linkedin, Code, Monitor, Bot, Briefcase, Download, Copy, Check, FileText, ShoppingBag, Calculator, Gamepad2, Settings, Mic, MicOff, Cloud, BarChart3, Moon, Music } from 'lucide-react';
 import Dock from './components/Dock';
 import Window from './components/Window';
 import Grain from './components/Grain';
@@ -41,6 +41,10 @@ const ProjectWindow = lazy(() => import('./components/ProjectWindow'));
 const NotesWindow = lazy(() => import('./components/NotesWindow'));
 const AppStoreWindow = lazy(() => import('./components/AppStoreWindow'));
 const SettingsWindow = lazy(() => import('./components/SettingsWindow'));
+const WeatherApp = lazy(() => import('./components/apps/Weather'));
+const MonitorApp = lazy(() => import('./components/apps/Monitor'));
+const ZenSpaceApp = lazy(() => import('./components/apps/ZenSpace'));
+const MusicApp = lazy(() => import('./components/apps/Music'));
 
 const PortfolioContent = () => {
   const { t } = useTranslation();
@@ -83,6 +87,19 @@ const PortfolioContent = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const toggleInstalledApp = (appId, uninstall = false) => {
+    setInstalledApps(prev => {
+      let next;
+      if (uninstall) {
+        next = prev.filter(id => id !== appId);
+      } else {
+        next = prev.includes(appId) ? prev : [...prev, appId];
+      }
+      localStorage.setItem('saidos-installed-apps', JSON.stringify(next));
+      return next;
+    });
+  };
+
   useEffect(() => {
     localStorage.setItem('saidos-installed-apps', JSON.stringify(installedApps));
   }, [installedApps]);
@@ -119,6 +136,10 @@ const PortfolioContent = () => {
     { id: 'store', label: 'App Store', icon: ShoppingBag, onClick: () => toggleApp('store'), isOpen: isAppOpen('store') },
     ...(installedApps.includes('calculator') ? [{ id: 'calculator', label: 'Calc', icon: Calculator, onClick: () => toggleApp('calculator'), isOpen: isAppOpen('calculator') }] : []),
     ...(installedApps.includes('tictactoe') ? [{ id: 'tictactoe', label: 'Game', icon: Gamepad2, onClick: () => toggleApp('tictactoe'), isOpen: isAppOpen('tictactoe') }] : []),
+    ...(installedApps.includes('weather') ? [{ id: 'weather', label: 'Weather', icon: Cloud, onClick: () => toggleApp('weather'), isOpen: isAppOpen('weather') }] : []),
+    ...(installedApps.includes('monitor') ? [{ id: 'monitor', label: 'Monitor', icon: BarChart3, onClick: () => toggleApp('monitor'), isOpen: isAppOpen('monitor') }] : []),
+    ...(installedApps.includes('zenspace') ? [{ id: 'zenspace', label: 'Zen', icon: Moon, onClick: () => toggleApp('zenspace'), isOpen: isAppOpen('zenspace') }] : []),
+    ...(installedApps.includes('music') ? [{ id: 'music', label: 'Music', icon: Music, onClick: () => toggleApp('music'), isOpen: isAppOpen('music') }] : []),
     { id: 'terminal', label: t('windows.terminal'), icon: Terminal, onClick: () => toggleApp('terminal'), isOpen: isAppOpen('terminal') },
     { id: 'ai', label: t('windows.ai'), icon: Bot, onClick: () => toggleApp('ai'), isOpen: isAppOpen('ai') },
     { id: 'github', label: t('windows.github'), icon: Github, onClick: () => toggleApp('github'), isOpen: isAppOpen('github') },
@@ -617,7 +638,7 @@ const PortfolioContent = () => {
           >
             <AppStoreWindow
               installedApps={installedApps}
-              onInstall={(appId) => setInstalledApps(prev => [...prev, appId])}
+              onInstall={(appId) => toggleInstalledApp(appId)}
               onOpen={(appId) => {
                 openApp(appId);
               }}
@@ -656,7 +677,77 @@ const PortfolioContent = () => {
             </Window>
           )}
 
-          {/* Settings Window */}
+          {/* Weather App */}
+          {installedApps.includes('weather') && (
+            <Window
+              key="window-weather"
+              id="weather"
+              title="Weather"
+              isOpen={isAppOpen('weather')}
+              onClose={() => closeApp('weather')}
+              onMinimize={() => closeApp('weather')}
+              zIndex={getAppZIndex('weather')}
+              onFocus={() => focusWindow('weather')}
+            >
+              <Suspense fallback={<WindowLoader />}>
+                <WeatherApp />
+              </Suspense>
+            </Window>
+          )}
+
+          {/* System Monitor */}
+          {installedApps.includes('monitor') && (
+            <Window
+              key="window-monitor"
+              id="monitor"
+              title="System Monitor"
+              isOpen={isAppOpen('monitor')}
+              onClose={() => closeApp('monitor')}
+              onMinimize={() => closeApp('monitor')}
+              zIndex={getAppZIndex('monitor')}
+              onFocus={() => focusWindow('monitor')}
+            >
+              <Suspense fallback={<WindowLoader />}>
+                <MonitorApp />
+              </Suspense>
+            </Window>
+          )}
+
+          {/* Zen Space */}
+          {installedApps.includes('zenspace') && (
+            <Window
+              key="window-zenspace"
+              id="zenspace"
+              title="Zen Space"
+              isOpen={isAppOpen('zenspace')}
+              onClose={() => closeApp('zenspace')}
+              onMinimize={() => closeApp('zenspace')}
+              zIndex={getAppZIndex('zenspace')}
+              onFocus={() => focusWindow('zenspace')}
+            >
+              <Suspense fallback={<WindowLoader />}>
+                <ZenSpaceApp />
+              </Suspense>
+            </Window>
+          )}
+
+          {/* Music App */}
+          {installedApps.includes('music') && (
+            <Window
+              key="window-music"
+              id="music"
+              title="Music"
+              isOpen={isAppOpen('music')}
+              onClose={() => closeApp('music')}
+              onMinimize={() => closeApp('music')}
+              zIndex={getAppZIndex('music')}
+              onFocus={() => focusWindow('music')}
+            >
+              <Suspense fallback={<WindowLoader />}>
+                <MusicApp />
+              </Suspense>
+            </Window>
+          )}
           <Window
             key="window-settings"
             id="settings"
